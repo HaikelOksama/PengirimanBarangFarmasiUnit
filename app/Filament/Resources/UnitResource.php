@@ -26,6 +26,7 @@ class UnitResource extends Resource
         return $form
             ->schema([
                 TextInput::make('nama')->required(),
+                TextInput::make('code')->required(),
                 TextInput::make('alamat')->required(),
                 TextInput::make('no_telpon')->required()->maxLength(20),
                 TextInput::make('kepala_unit')->required(),
@@ -38,6 +39,7 @@ class UnitResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nama')->sortable()->searchable(),
+                TextColumn::make('code'),
                 TextColumn::make('alamat'),
                 TextColumn::make('no_telpon'),
                 TextColumn::make('kepala_unit')->sortable()->searchable(),

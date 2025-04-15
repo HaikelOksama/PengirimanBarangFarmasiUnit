@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Livewire\Main;
+
+use App\Models\Farmalkes;
+use App\Models\Matreq;
+use App\Models\Unit;
+use App\Services\MatreqService;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Validate;
+use Livewire\Component;
+
+class CreateMaterialRequest extends Component
+{
+    public $searchFarmalkes = '';
+    public $selected = null;
+
+    #[Validate(
+        'required|exists:units,id',
+        
+    )]
+    public $toUnit;
+
+    #[Validate(
+        'required|array|min:1',
+    )]
+    public $requestList = [];
+
+    public function addFarmalkes() {
+        $farmalkes = Farmalkes::find($this->selected);
+        $this->selected = null;
+        $this->searchFarmalkes = '';
+        if(!empty($this->requestList)) {
+            foreach ($this->requestList as &$item) {
+                if($item['data']->id == $farmalkes->id) {
+                    $item['qty'] = $item['qty'] + 1;
+                    return;
+                }
+            }
+        } 
+        $this->requestList[] = ['data' => $farmalkes, 'qty' => 1];
+        
+
+    }
+
+    public function unsetFarmalkes($index) {
+        unset($this->requestList[$index]);
+        $this->requestList = array_values($this->requestList);
+    }
+
+    public function render()
+    {
+        $options = [];
+        if (strlen($this->searchFarmalkes) >= 2) {
+            $options = Farmalkes::where('nama', 'like', '%' . $this->searchFarmalkes . '%')
+                ->limit(5)
+                ->pluck('nama', 'id');
+        }
+
+        return view('livewire.main.create-material-request', compact('options'));
+    }
+
+    #[Computed(persist: true)]
+    public function units() {
+        return Unit::where('id', '!=', Auth::user()->unit_id)->select('id', 'nama')->get();
+    }
+
+    public function submit() {
+        $this->validate();
+        $matreq = new Matreq();
+        $matreq->toUnit()->associate($this->toUnit);
+        $matreq->fromUnit()->associate(Auth::user()->unit_id);
+        $serv = new MatreqService($matreq);
+        $serv->requestMatreq();
+        $serv->syncItems($this->requestList);
+        dd($matreq->loadMissing('items'));
+    }
+}
