@@ -18,6 +18,19 @@ class MatreqItems extends Model
     }
 
     public function calculateSubtotal() {
+        if($this->kirim != 0) {
+            return $this->kirim * $this->farmalkes->hna;
+        }
         return $this->pesan * $this->farmalkes->hna;
+    }
+
+    public function calculateTotal() {
+        return $this->calculateSubtotal() - ($this->calculateSubtotal() * $this->farmalkes->diskon / 100);
+    }
+
+    public function updateSubtotal() {
+        $this->subtotal_harga = $this->calculateSubtotal();
+        $this->total_harga = $this->calculateTotal();
+        $this->save();
     }
 }

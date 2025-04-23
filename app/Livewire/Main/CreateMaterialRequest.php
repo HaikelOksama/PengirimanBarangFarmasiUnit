@@ -8,9 +8,11 @@ use App\Models\Unit;
 use App\Services\MatreqService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
+#[Title('Buat Permintaan Alkes dan Obat')]
 class CreateMaterialRequest extends Component
 {
     public $searchFarmalkes = '';
@@ -53,7 +55,7 @@ class CreateMaterialRequest extends Component
     {
         $options = [];
         if (strlen($this->searchFarmalkes) >= 2) {
-            $options = Farmalkes::where('nama', 'like', '%' . $this->searchFarmalkes . '%')
+            $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
                 ->limit(5)
                 ->pluck('nama', 'id');
         }
@@ -74,6 +76,7 @@ class CreateMaterialRequest extends Component
         $serv = new MatreqService($matreq);
         $serv->requestMatreq();
         $serv->syncItems($this->requestList);
-        dd($matreq->loadMissing('items'));
+
+        $this->dispatch('success', 'Permintaan untuk unit ' . $matreq->toUnit->nama . ' berhasil dikirim');
     }
 }

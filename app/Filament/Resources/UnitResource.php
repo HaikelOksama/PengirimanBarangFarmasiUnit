@@ -6,6 +6,7 @@ use App\Filament\Resources\UnitResource\Pages;
 use App\Filament\Resources\UnitResource\RelationManagers;
 use App\Models\Unit;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -31,6 +32,10 @@ class UnitResource extends Resource
                 TextInput::make('no_telpon')->required()->maxLength(20),
                 TextInput::make('kepala_unit')->required(),
                 TextInput::make('apoteker')->required(),
+                Select::make('type')->options([
+                    'fktp' => 'FKTP',
+                    'rs' => 'RS'
+                ])->required()
             ]);
     }
 

@@ -1,14 +1,16 @@
 <?php
 
 use App\Livewire\Main\CreateMaterialRequest;
+use App\Livewire\Main\KirimMatreq;
 use App\Livewire\Main\MaterialRequest;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
+use App\Livewire\Utils\PrintInvoice;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect(route('login'));
 })->name('home');
 
 Route::view('dashboard', 'dashboard')
@@ -27,6 +29,12 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', MaterialRequest::class)->name('index');
             Route::get('/create', CreateMaterialRequest::class)->name('create');
         });
+        Route::prefix('permintaan-unit')->name('kirim.')->group(function () {
+            Route::get('/', KirimMatreq::class)->name('index');
+            Route::get('/{matreq}/print', PrintInvoice::class)->name('print');
+            // Route::get('/create', CreateMaterialRequest::class)->name('create');
+        });
+
     });
 });
 

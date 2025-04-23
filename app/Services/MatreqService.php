@@ -11,10 +11,19 @@ use App\Models\Unit;
 class MatreqService {
 
     public function __construct(public Matreq $matreq) {}
-
+    
 
     public function syncItems(array $items)
     {
+
+        
+    // public function calculateSubtotal() {
+    //     return $this->pesan * $this->farmalkes->hna;
+    // }
+
+    // public function calculateTotal() {
+    //     return $this->calculateSubtotal() - ($this->calculateSubtotal() * $this->farmalkes->diskon / 100);
+    // }
         $matchedIds = [];
         foreach ($items as $itemData) {
             $farmalkes = $itemData['data'];
@@ -31,10 +40,14 @@ class MatreqService {
                     'farmalkes_id' => $farmalkes->id,
                     'pesan' => $qty,
                     'subtotal_harga' => $farmalkes->hna * $qty,
-                    'total_harga' => $farmalkes->hna * $qty,
+                    'total_harga' => ($farmalkes->hna * $qty) - ($farmalkes->hna * $qty * $farmalkes->diskon / 100),
+                    'diskon' => $farmalkes->diskon,
+                    'hna' => $farmalkes->hna,
+                    'harga_beli' => $farmalkes->harga_beli,
+                    'isi' => $farmalkes->isi
                 ]
             );
-    
+            
             $matchedIds[] = $matreqItem->id;
         }
     
@@ -55,6 +68,7 @@ class MatreqService {
         $code = self::generateMatreqNum($this->matreq, MatreqType::KIRIM);
         $this->matreq->kirim_no = $code;
         $this->matreq->status = MatreqStatus::KIRIM->value;
+        $this->matreq->tgl_kirim = now();
         $this->matreq->save();
     }
 

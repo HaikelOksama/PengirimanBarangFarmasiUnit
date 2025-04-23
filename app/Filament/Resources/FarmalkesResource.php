@@ -28,17 +28,13 @@ class FarmalkesResource extends Resource
         return $form
             ->schema([
                 TextInput::make('nama')->required(),
-                Select::make('tipe')->options([
-                    'Obat' => 'Obat',
-                    'Alkes' => 'Alkes',
-                ])->required(),
-                Select::make('kategori')->options([
-                    'GENERIK' => 'GENERIK',
-                    'BRAND' => 'BRAND',
-                    '-' => '-',
-                ])->nullable(),
+                Select::make('pbf_kode')->searchable()->preload()->relationship('pbf', 'nama')->required(),
                 TextInput::make('satuan')->required(),
+                TextInput::make('isi')->numeric()->required(),
+                TextInput::make('kemasan')->required(),
+                TextInput::make('harga_beli')->numeric()->required(),
                 TextInput::make('hna')->prefix('Rp. ')->numeric()->required(),
+                TextInput::make('diskon')->prefix('%')->numeric()->required(),
                 TextInput::make('ppn')->prefix('%')->default(0)->nullable(),
             ]);
     }
@@ -48,8 +44,7 @@ class FarmalkesResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('nama')->sortable()->searchable(),
-                TextColumn::make('tipe')->sortable()->searchable(),
-                TextColumn::make('kategori')->sortable()->searchable(),
+                TextColumn::make('pbf.nama')->sortable()->searchable(),
                 TextColumn::make('satuan')->sortable(),
                 TextColumn::make('hna')->prefix('Rp. ')->sortable(),
                 TextColumn::make('ppn')->sortable(),

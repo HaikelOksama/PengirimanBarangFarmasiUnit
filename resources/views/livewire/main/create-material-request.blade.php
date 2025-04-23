@@ -45,8 +45,9 @@
                         <tr class="dark:text-zinc-300 ">
                             <th></th>
                             <th>Nama</th>
-                            <th>Type</th>
-                            <th>Kategori</th>
+                            <th>PBF</th>
+                            <th>Isi</th>
+                            <th>Kemasan</th>
                             <th>Satuan</th>
                             <th>HNA</th>
                             <th>Diminta</th>
@@ -65,8 +66,9 @@
 
                                 </td>
                                 <td>{{ $request['data']->nama }}</td>
-                                <td>{{ $request['data']->tipe }}</td>
-                                <td>{{ $request['data']->kategori }}</td>
+                                <td>{{ $request['data']->pbf->nama }}</td>
+                                <td>{{ $request['data']->isi }}</td>
+                                <td>{{ $request['data']->kemasan }}</td>
                                 <td>{{ $request['data']->satuan }}</td>
                                 <td>Rp. {{ $request['data']->hna }}</td>
                                 <td>
