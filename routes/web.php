@@ -7,6 +7,7 @@ use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Utils\PrintInvoice;
+use App\Livewire\Utils\PrintRequest;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,6 +29,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('material-request')->name('material-request.')->group(function () {
             Route::get('/', MaterialRequest::class)->name('index');
             Route::get('/create', CreateMaterialRequest::class)->name('create');
+            Route::get('/{matreq}/print', PrintRequest::class)->name('print');
         });
         Route::prefix('permintaan-unit')->name('kirim.')->group(function () {
             Route::get('/', KirimMatreq::class)->name('index');

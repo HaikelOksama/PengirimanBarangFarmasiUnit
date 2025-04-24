@@ -33,7 +33,11 @@ class UserResource extends Resource
                 TextInput::make('password')->password() ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                     ->dehydrated(fn (?string $state): bool => filled($state))
                     ->required(fn (string $operation): bool => $operation === 'create'),
-                Select::make('unit_id')->relationship('unit', 'nama')->searchable()->preload()->required(),
+                Select::make('unit_id')->relationship('unit', 'nama')->searchable()->preload(),
+                Select::make('roles')->relationship('roles', 'name')->multiple()->searchable()->preload()
+                ->createOptionForm([
+                    TextInput::make('name')->required(),
+                ])->required()
             ]);
     }
 

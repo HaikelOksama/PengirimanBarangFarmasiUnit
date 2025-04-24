@@ -33,7 +33,10 @@ class MaterialRequest extends Component
 
     public function render()
     {  
-        $matreq = Matreq::with('fromUnit', 'toUnit', 'items.farmalkes.pbf')->where('from_unit_id', Auth::user()->unit_id)
+        $matreq = Matreq::with('fromUnit', 'toUnit', 'items.farmalkes.pbf')
+        ->when(!Auth::user()->hasRole('admin'), function($query) {
+            $query->where('from_unit_id', Auth::user()->unit_id);
+        })
         ->orderByRaw("FIELD(status,'kirim','request', 'selesai')")
         ->when($this->unitQ, function($query) {
             return $query->where('to_unit_id', $this->unitQ);
@@ -44,8 +47,8 @@ class MaterialRequest extends Component
         ->when($this->startDate && $this->endDate, function($query) {
             $query->dateRange($this->startDate, $this->endDate);
         })
-        ->paginate(20);
-        return view('livewire.main.material-request', compact('matreq'))->title('Permintaan '.Auth::user()->unit->nama);
+        ->paginate(10);
+        return view('livewire.main.material-request', compact('matreq'))->title('Permintaan '.Auth::user()->unit?->nama ?? 'Unit');
     }
 
     public function receive($id) {

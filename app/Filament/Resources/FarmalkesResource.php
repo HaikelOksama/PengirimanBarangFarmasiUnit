@@ -25,9 +25,12 @@ class FarmalkesResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $last = Farmalkes::orderByDesc('kode')->first();
+        $kodeDef = str_pad((string) $last->kode + 1, 6, '0', STR_PAD_LEFT);
         return $form
             ->schema([
                 TextInput::make('nama')->required(),
+                TextInput::make('kode')->default($kodeDef)->required(),
                 Select::make('pbf_kode')->searchable()->preload()->relationship('pbf', 'nama')->required(),
                 TextInput::make('satuan')->required(),
                 TextInput::make('isi')->numeric()->required(),

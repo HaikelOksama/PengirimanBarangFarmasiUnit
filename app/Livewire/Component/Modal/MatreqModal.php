@@ -8,6 +8,8 @@ use App\Models\Matreq;
 use App\Models\MatreqItems;
 use App\Services\MatreqService;
 use Arr;
+use Auth;
+use DB;
 use Livewire\Component;
 
 class MatreqModal extends Component
@@ -25,11 +27,23 @@ class MatreqModal extends Component
     public $items = [];
 
     public function mount(Matreq $matreq) {
-        $matreqs = $matreq->loadMissing('fromUnit', 'toUnit', 'items.farmalkes.pbf');
-        $this->matreq = $matreqs;
-        $this->items = Arr::mapWithKeys($matreq->items->select('id','pesan', 'kirim', 'subtotal_harga', 'total_harga', 'hna')->toArray(), function($item) {
+        $this->matreq = $matreq->loadMissing('fromUnit', 'toUnit', 'items.farmalkes.pbf');
+        $this->items = Arr::mapWithKeys($matreq->items->select('id','pesan', 'kirim', 'subtotal_harga', 'total_harga', 'hna', 'diskon')->toArray(), function($item) {
             return [$item['id'] => $item];
         });
+    }
+
+    public function placeholder()
+    {
+        return <<<'HTML'
+        <div>
+            <!-- Loading spinner... -->
+            <flux:button class="w-30">
+                <span class="loading loading-bars loading-xl"></span>
+            </flux:button>
+            
+        </div>
+        HTML;
     }
 
     public function removeItem($id) {
@@ -55,14 +69,30 @@ class MatreqModal extends Component
 
     public function save() {
         if ($this->matreq) {
-            foreach ($this->items as $key => $item) {
-                $itemD = $this->matreq->items()->where('id', $item['id'])->limit(1);
-                $itemD->update([
-                    'pesan' => $item['pesan'],
-                    'kirim' => $item['kirim'],
-                ]);
-                $itemD->first()->updateSubtotal();
-            }
+            // dd($this->items);
+            DB::transaction(function () {
+                foreach ($this->items as $key => $item) {
+                    $itemD = MatreqItems::with('farmalkes.pbf')->where('id', $item['id'])->limit(1)->first();
+                    // dd($itemD->first()->loadMissing('farmalkes'));
+                    $itemD->update([
+                        'pesan' => $item['pesan'],
+                        'kirim' => $item['kirim'],
+                    ]);
+                    if(Auth::user()->hasRole('admin')) {
+                        $itemD->update([
+                            'hna' => $item['hna'],
+                            'diskon' => $item['diskon'],
+                        ]);
+                        $farmalkes = $itemD->farmalkes;
+                        if($itemD->hna != $farmalkes->hna || $itemD->diskon != $farmalkes->diskon) {
+                            $farmalkes->hna = $itemD->hna;
+                            $farmalkes->diskon = $itemD->diskon;
+                            $farmalkes->save();
+                        }
+                    }
+                    $itemD->updateSubtotal();
+                }
+            });
         }
         $this->dispatch('success', 'Data berhasil disimpan');
     }

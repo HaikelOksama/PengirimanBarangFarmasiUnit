@@ -31,7 +31,10 @@ class KirimMatreq extends Component
 
     public function render()
     {
-        $matreq = Matreq::with('fromUnit', 'toUnit', 'items.farmalkes.pbf')->where('to_unit_id', Auth::user()->unit_id)
+        $matreq = Matreq::with('fromUnit', 'toUnit', 'items.farmalkes.pbf')
+        ->when(!Auth::user()->hasRole('admin'), function($query) {
+            $query->where('to_unit_id', Auth::user()->unit_id);
+        })
         ->orderByRaw("FIELD(status, 'request', 'kirim', 'selesai')")
         ->when($this->unitQ, function($query) {
             return $query->where('from_unit_id', $this->unitQ);

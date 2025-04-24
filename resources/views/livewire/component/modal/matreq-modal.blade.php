@@ -1,4 +1,11 @@
 <div>
+    <flux:modal.trigger :name="'show-items-' . $matreq->id">
+        <flux:button>
+            {{ $matreq->items()->count() }}
+            Item
+            <flux:icon.eye variant="mini" class="ms-2" />
+        </flux:button>
+    </flux:modal.trigger>
     <flux:modal size="xl" :name="'show-items-' . $matreq->id">
         <div class="space-y-6">
             <div>
@@ -53,7 +60,8 @@
                                             style="z-index: 999999999999;">
                                             @forelse ($options as $id => $name)
                                                 <li @click="selected = '{{ $id }}'; search = '{{ $name }}'; open = false"
-                                                    class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer">
+                                                    class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer"
+                                                    wire:key="option-{{ $id }}">
                                                     {{ $name }}
                                                 </li>
                                             @empty
@@ -85,7 +93,9 @@
                                         {{ $item->farmalkes->nama }}</span>
                                     @if($matreq->status == \App\Enums\MatreqStatus::REQUEST->value)
                                         <div class="flex">
-                                            <flux:icon.trash class="hover:text-red-700 hover:cursor-pointer" variant="mini" wire:confirm="Hapus Obat {{ $item->farmalkes->nama }} dari Kiriman ?" wire:click="removeItem({{ $item->id }})">
+                                            <flux:icon.trash class="hover:text-red-700 hover:cursor-pointer" variant="mini"
+                                                wire:confirm="Hapus Obat {{ $item->farmalkes->nama }} dari Kiriman ?"
+                                                wire:click="removeItem({{ $item->id }})">
                                             </flux:icon.trash>
                                             <flux:modal.trigger name="edit-farmalkes-{{ $item->id }}">
                                                 <flux:icon.pencil-square class="hover:text-yellow-700 hover:cursor-pointer"
@@ -98,13 +108,30 @@
                                 <br>
                                 <span class="font-extralight">{{ $item->farmalkes->pbf->nama }}</span>
                             </flux:text>
+                            @unlessrole('admin')
                             <flux:text>HNA : Rp.{{ $item->hna }}</flux:text>
+                            @endunlessrole
+                            @role('admin')
+                            <div class="join border-b-2">
+                                <flux:text class="join-item">HNA: </flux:text>
+                                <input type='number' wire:model='items.{{ $item->id }}.hna'
+                                    class="border-none focus:ring-0 broder-b-1 focus:bg-amber-100 dark:focus:bg-amber-800 join-item ms-2 text-sm px-5 w-80" />
 
+                            </div>
+                            @endrole
+                            @role('admin')
+                            <div class="join border-b-2">
+                                <flux:text class="join-item">Diskon %: </flux:text>
+                                <input type='number' wire:model='items.{{ $item->id }}.diskon'
+                                    class="border-none focus:ring-0 broder-b-1 focus:bg-amber-100 dark:focus:bg-amber-800 join-item ms-2 text-sm px-5 w-80" />
+
+                            </div>
+                            @endrole
                         </div>
                         <div class="flex flex-col">
                             <div class="join border-b-2 ">
                                 <flux:text class="join-item">Diminta: </flux:text>
-                                <input @disabled($item->matreq->fromUnit != auth()->user()->unit || $matreq->status != \App\Enums\MatreqStatus::REQUEST->value) type="number"
+                                <input @unlessrole('admin') @disabled($item->matreq->fromUnit != auth()->user()->unit || $matreq->status != \App\Enums\MatreqStatus::REQUEST->value) @endunlessrole type="number"
                                     wire:model="items.{{ $item->id }}.pesan"
                                     class="border-none focus:ring-0 broder-b-1 focus:bg-amber-100 dark:focus:bg-amber-800 join-item ms-2 text-sm px-5 w-full" />
                                 <flux:text class="join-item font-extrabold ms-auto">{{ $item->farmalkes->satuan }}
@@ -115,20 +142,21 @@
                             <flux:spacer />
                             <div class="join border-b-2">
                                 <flux:text class="join-item">Dikirim: </flux:text>
-                                <input @disabled($item->matreq->toUnit != auth()->user()->unit || $matreq->status != \App\Enums\MatreqStatus::REQUEST->value) type="number"
+                                <input @unlessrole('admin') @disabled($item->matreq->toUnit != auth()->user()->unit || $matreq->status != \App\Enums\MatreqStatus::REQUEST->value) @endunlessrole type="number"
                                     wire:model="items.{{ $item->id }}.kirim"
                                     class="border-none focus:ring-0 broder-b-1 dark:focus:bg-amber-800 join-item ms-2 text-sm w-full px-5" />
                                 <flux:text class="join-item font-extrabold ms-auto">{{ $item->farmalkes->satuan }}
                                 </flux:text>
                             </div>
                             <flux:text class="font-extrabold">Subtotal : Rp.{{ $item->subtotal_harga }}</flux:text>
+                            <flux:text class="font-extrabold">Total : Rp.{{ $item->total_harga }}</flux:text>
                         </div>
 
 
                     </div>
                 @endforeach
             </div>
-            @if($matreq->status == \App\Enums\MatreqStatus::REQUEST->value)
+            @if(Auth::user()->hasRole('admin') || $matreq->status == \App\Enums\MatreqStatus::REQUEST->value)
                 <div class="flex">
                     <flux:spacer />
                     <flux:button.group>

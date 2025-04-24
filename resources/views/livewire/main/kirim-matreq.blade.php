@@ -55,7 +55,7 @@
                 </thead>
                 <tbody>
                     @forelse($matreq as $idx => $request)
-                                        <livewire:component.modal.matreq-modal :matreq="$request" :key="'show-items-' . $request->id" />
+                                        
                                         <tr class="hover:bg-gray-200 dark:hover:bg-zinc-700">
                                             <td>
                                                 <div class="flex">
@@ -89,20 +89,14 @@
                                                 <div @class([
                                                     "badge",
                                                     "badge-accent" => $request->status == \App\Enums\MatreqStatus::REQUEST->value,
-                                                    'badge-info' => $request->status == \App\Enums\MatreqStatus::KIRIM->value
+                                                    'badge-info' => $request->status == \App\Enums\MatreqStatus::KIRIM->value,
+                                                    "badge-success" => $request->status == \App\Enums\MatreqStatus::SELESAI->value,
                                                 ])>
                                                     {{ \App\Enums\MatreqStatus::from($request->status)->label() ?? $request->status }}
                                                 </div>
                                             </td>
                                             <td>
-                                                <flux:modal.trigger :name="'show-items-' . $request->id">
-                                                    <flux:button>
-                                                        {{ $request->items()->count() }}
-                                                        Item
-                                                        <flux:icon.eye variant="mini" class="ms-2" />
-                                                    </flux:button>
-                                                </flux:modal.trigger>
-
+                                                <livewire:component.modal.matreq-modal lazy :matreq="$request" :key="'show-items-mat-modal' . $request->id" />
                                             </td>
                                             <td>
                                                 <div class="flex gap-2">

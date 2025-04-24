@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,18 +20,19 @@ class MatreqItems extends Model
 
     public function calculateSubtotal() {
         if($this->kirim != 0) {
-            return $this->kirim * $this->farmalkes->hna;
+            return $this->kirim * $this->hna;
         }
-        return $this->pesan * $this->farmalkes->hna;
+        return $this->pesan * $this->hna;
     }
 
     public function calculateTotal() {
-        return $this->calculateSubtotal() - ($this->calculateSubtotal() * $this->farmalkes->diskon / 100);
+        return $this->calculateSubtotal() - ($this->calculateSubtotal() * $this->diskon / 100);
     }
 
     public function updateSubtotal() {
-        $this->subtotal_harga = $this->calculateSubtotal();
-        $this->total_harga = $this->calculateTotal();
-        $this->save();
+            $this->subtotal_harga = $this->calculateSubtotal();
+            $this->total_harga = $this->calculateTotal();
+            
+            $this->save();
     }
 }

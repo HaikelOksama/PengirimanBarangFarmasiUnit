@@ -2,21 +2,22 @@
     {{-- The Master doesn't talk, he acts. --}}
     <x-page-heading :title="__('Material Request')" :subtitle="__('Daftar Permintaan Alkes dan Obat')" />
 
+    @unlessrole('admin')
     <a href="{{ route('main.material-request.create') }}" class="btn btn-accent">Buat permintaan ke unit</a>
-
+    @endunlessrole
     <div class="overflow-x-auto">
         <div class="py-2 border rounded-2xl my-5">
-            <div class="flex px-5 border-b-1 pb-2 gap-5">
+            <div class="flex px-5 border-b-1 pb-2 gap-5 flex-wrap">
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend dark:text-slate-100">Unit</legend>
-                    <select wire:model.live="unitQ" class="select rounded-0">
+                    <select  wire:model.live="unitQ" class="select  rounded-0">
                         <option value="" selected>--------</option>
                         @foreach ($this->units() as $key => $unit)
                             <option value="{{ $key }}">{{ $unit }}</option>
                         @endforeach
                     </select>
                 </fieldset>
-                <fieldset class="fieldset">
+                <fieldset class="fieldset ">
                     <legend class="fieldset-legend dark:text-slate-100">Pencarian</legend>
                     <label class="input">
                         <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -55,7 +56,7 @@
                 </thead>
                 <tbody>
                     @forelse($matreq as $idx => $request)
-                        <livewire:component.modal.matreq-modal :matreq="$request" :key="'show-items-' . $request->id" />
+                        
                         <tr class="hover:bg-gray-200 dark:hover:bg-zinc-700">
                             <td>
                                 <div class="flex">
@@ -85,25 +86,31 @@
                                 {{ $request->toUnit->nama }}
                             </td>
                             <td>
-                                <div @class(["badge", "badge-accent" => $request->status == \App\Enums\MatreqStatus::REQUEST->value])>
+                                <div @class([
+                                    "badge", 
+                                    "badge-accent" => $request->status == \App\Enums\MatreqStatus::REQUEST->value,
+                                    "badge-info" => $request->status == \App\Enums\MatreqStatus::KIRIM->value,
+                                    "badge-success" => $request->status == \App\Enums\MatreqStatus::SELESAI->value,
+                                ])>
                                     {{ \App\Enums\MatreqStatus::from($request->status)->label() ?? $request->status }}
                                 </div>
                             </td>
                             <td>
-                                <flux:modal.trigger :name="'show-items-' . $request->id">
+                                {{-- <flux:modal.trigger :name="'show-items-' . $request->id">
                                     <flux:button>
                                         {{ $request->items()->count() }}
                                         Item
                                         <flux:icon.eye variant="mini" class="ms-2" />
                                     </flux:button>
-                                </flux:modal.trigger>
-
+                                </flux:modal.trigger> --}}
+                                <livewire:component.modal.matreq-modal lazy :matreq="$request" :key="'show-items-modal' . $request->id" />
                             </td>
                             <td>
                                 <div class="flex">
                                     <flux:modal.trigger :name="'show-items-' . $request->id">
                                         <flux:icon.pencil-square class="hover:cursor-pointer hover:text-yellow-700" />
                                     </flux:modal.trigger>
+                                    <flux:icon.printer x-on:click="function() { window.open('{{ route('main.material-request.print', $request) }}', '_blank') }" class="hover:cursor-pointer hover:text-red-600"/>
                                     @if ($request->status == \App\Enums\MatreqStatus::REQUEST->value)
                                         <flux:icon.trash class="hover:cursor-pointer hover:text-red-700"
                                             wire:click="destroy({{ $request->id }})"
@@ -137,7 +144,7 @@
                 </tbody>
             </table>
 
-            <div class="">
+            <div class="p-5">
                 {{ $matreq->links() }}
             </div>
         </div>
