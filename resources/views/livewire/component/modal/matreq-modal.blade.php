@@ -50,19 +50,19 @@
                                 <div class="join w-full">
                                     <div x-data="{ open: false, search: @entangle('searchFarmalkes'), selected: @entangle('selected') }"
                                         class="relative w-full">
-                                        <input wire:model.live="searchFarmalkes" @focus="open = true"
-                                            @keydown.enter="open = true" @keydown.backspace="$wire.selected = null"
-                                            @click.away="open = false" @class(["join-item w-full border rounded-lg px-4 py-2"])
+                                        <input wire:model.live="searchFarmalkes" @focus="open = true" @keydown="open = true"
+                                            @keydown.backspace="$wire.selected = null" @click.away="open = false"
+                                            @class(["join-item w-full border rounded-lg px-4 py-2"])
                                             x-bind:class="selected ? 'border-green-500' : ''" placeholder="Search..." />
 
                                         <ul x-show="open && search.length >= 2"
                                             class="absolute  bg-white dark:bg-amber-900 w-full mt-1 border rounded-lg max-h-60 overflow-y-auto"
                                             style="z-index: 999999999999;">
-                                            @forelse ($options as $id => $name)
-                                                <li @click="selected = '{{ $id }}'; search = '{{ $name }}'; open = false"
+                                            @forelse ($options as $opt)
+                                                <li @click="selected = '{{ $opt->id }}'; search = '{{ $opt->nama }}'; open = false"
                                                     class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer"
-                                                    wire:key="option-{{ $id }}">
-                                                    {{ $name }}
+                                                    wire:key="option-{{ $opt->id }}">
+                                                    {{ $opt->nama }} <--> {{ $opt->pbf->nama }}
                                                 </li>
                                             @empty
                                                 <li class="px-4 py-2 text-gray-500">No results found.</li>
@@ -97,7 +97,7 @@
                                                 wire:confirm="Hapus Obat {{ $item->farmalkes->nama }} dari Kiriman ?"
                                                 wire:click="removeItem({{ $item->id }})">
                                             </flux:icon.trash>
-                                            <flux:modal.trigger name="edit-farmalkes-{{ $item->id }}">
+                                            <flux:modal.trigger name="edit-farmalkes-{{ $item->id }}-{{ $matreq->id }}">
                                                 <flux:icon.pencil-square class="hover:text-yellow-700 hover:cursor-pointer"
                                                     variant="mini"></flux:icon.pencil-square>
                                             </flux:modal.trigger>

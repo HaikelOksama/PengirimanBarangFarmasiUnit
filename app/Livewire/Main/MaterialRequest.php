@@ -38,6 +38,7 @@ class MaterialRequest extends Component
             $query->where('from_unit_id', Auth::user()->unit_id);
         })
         ->orderByRaw("FIELD(status,'kirim','request', 'selesai')")
+        ->orderByDesc('created_at')
         ->when($this->unitQ, function($query) {
             return $query->where('to_unit_id', $this->unitQ);
         })

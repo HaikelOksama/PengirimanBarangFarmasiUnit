@@ -36,6 +36,7 @@ class KirimMatreq extends Component
             $query->where('to_unit_id', Auth::user()->unit_id);
         })
         ->orderByRaw("FIELD(status, 'request', 'kirim', 'selesai')")
+        ->orderByDesc('created_at')
         ->when($this->unitQ, function($query) {
             return $query->where('from_unit_id', $this->unitQ);
         })

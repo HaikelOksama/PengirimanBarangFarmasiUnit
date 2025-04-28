@@ -62,7 +62,8 @@ class MatreqModal extends Component
         if (strlen($this->searchFarmalkes) >= 2) {
             $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
                 ->limit(5)
-                ->pluck('nama', 'id');
+                ->select('id', 'nama', 'pbf_kode')->get();
+                // dd($options);
         }
         return view('livewire.component.modal.matreq-modal', compact('options'));
     }

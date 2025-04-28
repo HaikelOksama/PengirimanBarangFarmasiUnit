@@ -19,8 +19,7 @@ class CreateMaterialRequest extends Component
     public $selected = null;
 
     #[Validate(
-        'required|exists:units,id',
-        
+        rule: 'required|exists:units,id',
     )]
     public $toUnit;
 
@@ -56,8 +55,8 @@ class CreateMaterialRequest extends Component
         $options = [];
         if (strlen($this->searchFarmalkes) >= 2) {
             $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
-                ->limit(5)
-                ->pluck('nama', 'id');
+            ->select('id', 'nama', 'pbf_kode')
+                ->limit(5)->get();
         }
 
         return view('livewire.main.create-material-request', compact('options'));
@@ -76,7 +75,7 @@ class CreateMaterialRequest extends Component
         $serv = new MatreqService($matreq);
         $serv->requestMatreq();
         $serv->syncItems($this->requestList);
-
+        $this->reset('requestList', 'toUnit');
         $this->dispatch('success', 'Permintaan untuk unit ' . $matreq->toUnit->nama . ' berhasil dikirim');
     }
 }
