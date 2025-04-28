@@ -14,6 +14,9 @@ class Profile extends Component
 
     public ?string $email = '';
 
+    public string $apoteker = '';
+    public string $kepala_unit = '';
+
     /**
      * Mount the component.
      */
@@ -21,6 +24,8 @@ class Profile extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email ?? '';
+        $this->apoteker = Auth::user()->unit->apoteker;
+        $this->kepala_unit = Auth::user()->unit->kepala_unit;
     }
 
     /**
@@ -41,16 +46,25 @@ class Profile extends Component
                 'max:255',
                 Rule::unique(User::class)->ignore($user->id),
             ],
-        ]);
 
+        ]);
+        
         $user->fill($validated);
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
-        $user->save();
+        $unitValidate = $this->validate([
+            'kepala_unit' => ['required', 'string', 'max:255'],
+            'apoteker' => ['required', 'string', 'max:255']
+        ]);
+        $unit = $user->unit;
+        $unit->fill($unitValidate);
 
+        $unit->save();
+        $user->save();
+        
         $this->dispatch('profile-updated', name: $user->name);
     }
 
