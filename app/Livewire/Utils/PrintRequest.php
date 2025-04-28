@@ -19,7 +19,7 @@ class PrintRequest extends Component
     #[Layout('components.layouts.print')]
     public function render()
     {
-        if(!Auth::user()->hasRole('admin') && Auth::user()->unit != $this->matreq->fromUnit || $this->matreq->status == \App\Enums\MatreqStatus::REQUEST->value) {
+        if(!Auth::user()->hasRole('admin') && Auth::user()->unit != $this->matreq->fromUnit) {
             abort(403);
         }
         

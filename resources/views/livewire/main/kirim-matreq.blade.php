@@ -122,7 +122,10 @@
                                                             <td colspan="2">Nomor Pengiriman : {{ $request->kirim_no }}</td>
                                                             <td colspan="2">
                                                                 @if ($request->status == \App\Enums\MatreqStatus::SELESAI->value)
-                                                                    <flux:button disabled variant="primary" class="bg-green-600">Sudah Selesai</flux:button>
+                                                                <button class="btn btn-success w-28 border rounded"  >
+                                                                    Selesai
+                                                                </button>
+                                                                    {{-- <flux:button disabled variant="primary" class="bg-green-600">Sudah Selesai</flux:button> --}}
                                                                 @endif
                                                             </td>
                                                         </tr>

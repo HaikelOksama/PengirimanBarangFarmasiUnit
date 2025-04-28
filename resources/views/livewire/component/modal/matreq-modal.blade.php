@@ -34,7 +34,7 @@
             <div>
                 @foreach ($matreq->items as $item)
                     @if($matreq->status == \App\Enums\MatreqStatus::REQUEST->value)
-                        <flux:modal name="edit-farmalkes-{{ $item->id }}" class="md:w-100"
+                        <flux:modal name="edit-farmalkes-{{ $item->id }}-{{ $matreq->id }}" class="md:w-100"
                             style="min-width: 40% !important; min-height: 400px !important; " :key="'modal-edit' . $item->id">
                             <div class="space-y-6">
                                 <div>

@@ -126,12 +126,15 @@
                                 <td colspan="2">Nomor Pengiriman : {{ $request->kirim_no }}</td>
                                 <td colspan="2">
                                     @if($request->status == \App\Enums\MatreqStatus::KIRIM->value)
-                                        <flux:button variant="primary" class="bg-green-600"
+                                        <button class="btn btn-accent border rounded" wire:confirm="Terima Kiriman {{ $request->matreq_no }} ?" wire:click="receive({{ $request->id }})">
+                                            Terima Kiriman
+                                        </button>
+                                        {{-- <flux:button variant="outline" class="bg-green-600"
                                             wire:click="receive({{ $request->id }})">
                                             Terima Kiriman
-                                        </flux:button>
+                                        </flux:button> --}}
                                     @elseif ($request->status == \App\Enums\MatreqStatus::SELESAI->value)
-                                        <flux:button disabled variant="primary" class="bg-green-600">Sudah Selesai</flux:button>
+                                        <flux:button disabled variant="filled" class="bg-green-600">Sudah Selesai</flux:button>
                                     @endif
                                 </td>
                             </tr>
