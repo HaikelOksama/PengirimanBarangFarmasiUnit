@@ -56,8 +56,7 @@
                 </thead>
                 <tbody>
                     @forelse($matreq as $idx => $request)
-                        
-                        <tr class="hover:bg-gray-200 dark:hover:bg-zinc-700">
+                        <tr class="hover:bg-gray-200 dark:hover:bg-zinc-700" wire:key="matreq-{{ $request->id }}">
                             <td>
                                 <div class="flex">
                                     {{ $loop->iteration }}
