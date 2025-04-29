@@ -24,8 +24,8 @@ class Profile extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email ?? '';
-        $this->apoteker = Auth::user()->unit->apoteker;
-        $this->kepala_unit = Auth::user()->unit->kepala_unit;
+        $this->apoteker = Auth::user()->unit?->apoteker ?? '';
+        $this->kepala_unit = Auth::user()->unit?->kepala_unit ?? '';
     }
 
     /**
@@ -38,14 +38,14 @@ class Profile extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
 
-            'email' => [
-                'nullable',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique(User::class)->ignore($user->id),
-            ],
+            // 'email' => [
+            //     'nullable',
+            //     'string',
+            //     'lowercase',
+            //     'email',
+            //     'max:255',
+            //     Rule::unique(User::class)->ignore($user->id),
+            // ],
 
         ]);
         
@@ -55,14 +55,17 @@ class Profile extends Component
             $user->email_verified_at = null;
         }
 
-        $unitValidate = $this->validate([
-            'kepala_unit' => ['required', 'string', 'max:255'],
-            'apoteker' => ['required', 'string', 'max:255']
-        ]);
-        $unit = $user->unit;
-        $unit->fill($unitValidate);
-
-        $unit->save();
+        if($user->unit != null) {
+            $unitValidate = $this->validate([
+                'kepala_unit' => ['required', 'string', 'max:255'],
+                'apoteker' => ['required', 'string', 'max:255']
+            ]);
+            $unit = $user->unit;
+            $unit->fill($unitValidate);
+    
+            $unit->save();
+        }
+       
         $user->save();
         
         $this->dispatch('profile-updated', name: $user->name);

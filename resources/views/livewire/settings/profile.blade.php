@@ -4,11 +4,13 @@
     <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
             <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
-            <flux:input wire:model="kepala_unit" :label="__('Kepala')" type="text" required autofocus
-                autocomplete="kepala" />
-            <flux:input wire:model="apoteker" :label="__('Apoteker')" type="text" required autofocus
-                autocomplete="apoteker" />
 
+            @if(auth()->user()->unit != null)
+                <flux:input wire:model="kepala_unit" :label="__('Kepala')" type="text" required autofocus
+                    autocomplete="kepala" />
+                <flux:input wire:model="apoteker" :label="__('Apoteker')" type="text" required autofocus
+                    autocomplete="apoteker" />
+            @endif
             <div>
                 <flux:input wire:model="email" :label="__('Email')" type="email" autocomplete="email" />
 
