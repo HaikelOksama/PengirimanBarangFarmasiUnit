@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Main\CreateMaterialRequest;
+use App\Livewire\Main\Farmalkes;
 use App\Livewire\Main\KirimMatreq;
 use App\Livewire\Main\MaterialRequest;
 use App\Livewire\Settings\Appearance;
@@ -35,6 +36,10 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', KirimMatreq::class)->name('index');
             Route::get('/{matreq}/print', PrintInvoice::class)->name('print');
             // Route::get('/create', CreateMaterialRequest::class)->name('create');
+        });
+
+        Route::middleware('role:admin')->prefix('farmalkes')->name('farmalkes.')->group(function() {
+            Route::get('/', Farmalkes::class)->name('index');
         });
 
     });

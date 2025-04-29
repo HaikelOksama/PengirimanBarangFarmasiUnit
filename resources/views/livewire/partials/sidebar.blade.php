@@ -14,17 +14,25 @@
                 :current="request()->routeIs('material-request/*')" wire:navigate>
                 Material Request
                 @if($kirimMasuk > 0)
-                    <div class="ms-2 badge badge-sm badge-error px-1.5" >{{ $kirimMasuk }}</div>
+                    <div class="ms-2 badge badge-sm badge-error px-1.5">{{ $kirimMasuk }}</div>
                 @endif
             </flux:navlist.item>
             <flux:navlist.item icon="bolt" :href="route('main.kirim.index')"
                 :current="request()->routeIs('permintaan-unit/*')" wire:navigate>
                 Kirim Unit (Permintaan)
                 @if($kirimRequest > 0)
-                    <div class="ms-2 badge badge-sm badge-error rounded-full px-1.5" >{{ $kirimRequest }}</div>
+                    <div class="ms-2 badge badge-sm badge-error rounded-full px-1.5">{{ $kirimRequest }}</div>
                 @endif
             </flux:navlist.item>
         </flux:navlist.group>
+        @role('admin|superadmin')
+        <flux:navlist.group heading="Master" class="grid">
+            <flux:navlist.item icon="star" :href="route('main.farmalkes.index')"
+                :current="request()->routeIs('farmalkes/*')" wire:navigate>
+                Barang farmalkes
+            </flux:navlist.item>
+        </flux:navlist.group>
+        @endrole
     </flux:navlist>
 
     <flux:spacer />

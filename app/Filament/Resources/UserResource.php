@@ -37,7 +37,7 @@ class UserResource extends Resource
                 Select::make('roles')->relationship('roles', 'name')->multiple()->searchable()->preload()
                 ->createOptionForm([
                     TextInput::make('name')->required(),
-                ])->required()
+                ])
             ]);
     }
 
