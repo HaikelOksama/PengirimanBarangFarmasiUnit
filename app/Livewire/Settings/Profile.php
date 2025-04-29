@@ -2,10 +2,8 @@
 
 namespace App\Livewire\Settings;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class Profile extends Component
@@ -37,16 +35,6 @@ class Profile extends Component
 
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-
-            // 'email' => [
-            //     'nullable',
-            //     'string',
-            //     'lowercase',
-            //     'email',
-            //     'max:255',
-            //     Rule::unique(User::class)->ignore($user->id),
-            // ],
-
         ]);
         
         $user->fill($validated);
@@ -65,7 +53,6 @@ class Profile extends Component
     
             $unit->save();
         }
-       
         $user->save();
         
         $this->dispatch('profile-updated', name: $user->name);
