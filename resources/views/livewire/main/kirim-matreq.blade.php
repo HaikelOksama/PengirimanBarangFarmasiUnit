@@ -48,6 +48,9 @@
                         <th>Tanggal</th>
                         <th>Nomor</th>
                         <th>Permintaan Dari Unit</th>
+                        @role('admin')
+                        <th>Kiriman Unit</th>
+                        @endrole
                         <th>Status</th>
                         <th>Permintaan</th>
                         <th>Aksi</th>
@@ -85,6 +88,11 @@
                                             <td>
                                                 {{ $request->fromUnit->nama }}
                                             </td>
+                                            @role('admin')
+                                            <td>
+                                                {{ $request->toUnit->nama }}
+                                            </td>
+                                            @endrole
                                             <td>
                                                 <div @class([
                                                     "badge",

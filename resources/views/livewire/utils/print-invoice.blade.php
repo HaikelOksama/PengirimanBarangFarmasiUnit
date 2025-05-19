@@ -95,30 +95,44 @@
         </tfoot>
     </table>
 
-    <div class="flex justify-between text-xs mt-8">
+    <div class="flex justify-between text-xs mt-8 flex-wrap gap-y-10">
         <div class="text-center w-1/3">
-            <p>Pengirim</p>
+            <p class="font-bold">Apoteker Pengirim</p>
             <br><br>
             <p class="underline">{{ $matreq->toUnit->apoteker }}</p>
             <p>Apoteker</p>
         </div>
         <div class="text-center w-1/3">
-            <p>Mengetahui</p>
-            <br><br>
-            @if ($matreq->toUnit->type == 'rs')
-                <p class="underline">dr. Ahmad Syubki Asy’ari
-                </p>
-                <p>Kepala Rumah Sakit</p>
-            @else
+            @if ($matreq->toUnit->type != 'rs')
+                <p class="font-bold">Diperiksa oleh</p>
+                <br><br>
                 <p class="underline">dr. Tommy Kirana, MM.</p>
                 <p>Manajer Klinik</p>
+
             @endif
 
         </div>
         <div class="text-center w-1/3">
-            <p>Penerima</p>
+            <p class="font-bold">Apoteker Penerima</p>
             <br><br>
-            <p class="underline">{{ $matreq->fromUnit->kepala_unit }}</p>
+            <p class="underline">{{ $matreq->fromUnit->apoteker }}</p>
+            <p>Apoteker</p>
+        </div>
+        <div class="text-center w-1/3">
+            <p class="font-bold">Mengetahui Kepala {{  Str::title($matreq->toUnit->nama) }}</p>
+            <br><br>
+            <p class="underline">{{ $matreq->toUnit->kepala_unit  }}</p>
+            @if ($matreq->toUnit->type == 'rs')
+                <p>Kepala Rumah Sakit</p>
+            @else
+                <p>Kepala Klinik</p>
+            @endif
+
+        </div>
+        <div class="text-center w-1/3">
+            <p class="font-bold">Mengetahui Kepala {{ Str::title($matreq->fromUnit->nama) }}</p>
+            <br><br>
+            <p class="underline">{{ $matreq->fromUnit->kepala_unit}}</p>
             <p>Kepala Klinik</p>
         </div>
     </div>

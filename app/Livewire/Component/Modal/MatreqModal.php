@@ -105,6 +105,32 @@ class MatreqModal extends Component
         }
     }
 
+    public function addFarmalkes() {
+        $this->validate([
+            'selected' => ['required', 'exists:farmalkes,id']
+        ]);
+
+        $farmalkes = Farmalkes::find($this->selected);
+        $this->selected = null;
+        $this->searchFarmalkes = '';
+        $this->matreq->items()->create([
+            'pesan' => 1,
+            'kirim' => 0,
+            'farmalkes_id' => $farmalkes->id,
+            'hna' => $farmalkes->hna,
+            'diskon' => $farmalkes->diskon,
+            'harga_beli' => $farmalkes->harga_beli,
+            'subtotal_harga' => $farmalkes->hna ,
+            'total_harga' => $farmalkes->hna + ($farmalkes->hna * $farmalkes->diskon / 100),
+            'isi' => $farmalkes->isi,
+        ]);
+
+        $this->items = Arr::mapWithKeys($this->matreq->items->select('id','pesan', 'kirim', 'subtotal_harga', 'total_harga', 'hna', 'diskon')->toArray(), function($item) {
+            return [$item['id'] => $item];
+        });
+        $this->dispatch('success', 'Item berhasil ditambahkan');
+    }
+
     public function changeFarmalkes($id) {
         $current = Farmalkes::find($id);
         $new = Farmalkes::find($this->selected);

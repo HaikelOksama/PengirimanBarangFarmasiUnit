@@ -16,6 +16,7 @@
                     </flux:text>
 
                 </div>
+
                 @if($matreq->status == \App\Enums\MatreqStatus::KIRIM->value)
                     <div class="badge badge-success">
                         <svg class="size-[1em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -157,9 +158,13 @@
                 @endforeach
             </div>
             @if(Auth::user()->hasRole('admin') || $matreq->status == \App\Enums\MatreqStatus::REQUEST->value)
+           
                 <div class="flex">
                     <flux:spacer />
                     <flux:button.group>
+                        <flux:modal.trigger name="add-farmalkes-{{ $matreq->id }}">
+                            <flux:button icon="plus">Tambah</flux:button>
+                        </flux:modal.trigger>
                         <flux:button icon="bolt" type="submit" variant="filled" wire:click="save">Simpan Perubahan
                         </flux:button>
                         @if(auth()->user()->unit == $matreq->toUnit)
@@ -172,6 +177,49 @@
                     </flux:button.group>
                 </div>
             @endif
+        </div>
+    </flux:modal>
+    <flux:modal name="add-farmalkes-{{ $matreq->id }}" class="md:w-100"
+        style="min-width: 40% !important; min-height: 400px !important; " :key="'modal-edit' . $item->id">
+        <div class="space-y-6">
+            <div>
+                <flux:heading size="lg">Tambah Item</flux:heading>
+                <div class="flex align-bottom">
+                    <flux:text class="mt-2">Untuk {{ $matreq->matreq_no }}
+                    </flux:text>
+                    <flux:icon.arrow-down-right variant="mini" />
+                </div>
+                <flux:spacer />
+            </div>
+            <flux:text class=" text-amber-600">Pilih Obat/Alkes Baru</flux:text>
+            <div class="join w-full">
+                <div x-data="{ open: false, search: @entangle('searchFarmalkes'), selected: @entangle('selected') }"
+                    class="relative w-full">
+                    <input wire:model.live="searchFarmalkes" @focus="open = true" @keydown="open = true"
+                        @keydown.backspace="$wire.selected = null" @click.away="open = false"
+                        @class(["join-item w-full border rounded-lg px-4 py-2"])
+                        x-bind:class="selected ? 'border-green-500' : ''" placeholder="Search..." />
+
+                    <ul x-show="open && search.length >= 2"
+                        class="absolute  bg-white dark:bg-amber-900 w-full mt-1 border rounded-lg max-h-60 overflow-y-auto"
+                        style="z-index: 999999999999;">
+                        @forelse ($options as $opt)
+                            <li @click="selected = '{{ $opt->id }}'; search = '{{ $opt->nama }}'; open = false"
+                                class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer"
+                                wire:key="option-{{ $opt->id }}">
+                                {{ $opt->nama }} <--> {{ $opt->pbf->nama }}
+                            </li>
+                        @empty
+                            <li class="px-4 py-2 text-gray-500">No results found.</li>
+                        @endforelse
+                    </ul>
+                    <button class="btn join-item btn-accent mt-4"
+                        wire:click="addFarmalkes"
+                        x-bind:disabled="!selected">Tambah</button>
+
+                </div>
+
+            </div>
         </div>
     </flux:modal>
 </div>

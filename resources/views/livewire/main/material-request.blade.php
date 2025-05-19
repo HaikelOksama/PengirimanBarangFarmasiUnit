@@ -48,6 +48,9 @@
                         <th></th>
                         <th>Tanggal</th>
                         <th>Nomor</th>
+                        @role('admin')
+                        <th>Permintaan Dari Unit</th>
+                        @endrole
                         <th>Ke Unit</th>
                         <th>Status</th>
                         <th>Permintaan</th>
@@ -81,6 +84,11 @@
                             <td>
                                 {{ $request->matreq_no }}
                             </td>
+                            @role('admin')
+                            <td>
+                                {{ $request->fromUnit->nama }}
+                            </td>
+                            @endrole
                             <td>
                                 {{ $request->toUnit->nama }}
                             </td>

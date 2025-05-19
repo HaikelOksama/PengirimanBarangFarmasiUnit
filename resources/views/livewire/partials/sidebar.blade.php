@@ -31,6 +31,11 @@
                 :current="request()->routeIs('farmalkes/*')" wire:navigate>
                 Barang farmalkes
             </flux:navlist.item>
+            @role('admin')
+            <flux:navlist.item icon="star" href="/admin" target="_blank">
+                Masuk panel admin
+            </flux:navlist.item>
+            @endrole
         </flux:navlist.group>
         @endrole
     </flux:navlist>
