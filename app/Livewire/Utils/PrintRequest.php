@@ -19,9 +19,9 @@ class PrintRequest extends Component
     #[Layout('components.layouts.print')]
     public function render()
     {
-        if(!Auth::user()->hasRole('admin') && Auth::user()->unit != $this->matreq->fromUnit) {
-            abort(403);
-        }
+        // if(!Auth::user()->hasRole('admin') && Auth::user()->unit != $this->matreq->fromUnit) {
+        //     abort(403);
+        // }
         
         return view('livewire.utils.print-request');
     }

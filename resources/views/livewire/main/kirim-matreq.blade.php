@@ -111,6 +111,7 @@
                                                     <flux:modal.trigger :name="'show-items-' . $request->id">
                                                         <flux:icon.pencil-square class="hover:cursor-pointer hover:text-yellow-700" />
                                                     </flux:modal.trigger>
+                                                    <flux:icon.printer x-on:click="function() { window.open('{{ route('main.material-request.print', $request) }}', '_blank') }" class="hover:cursor-pointer hover:text-red-600"/>
                                                     @if($request->status != \App\Enums\MatreqStatus::REQUEST->value)
                                                         <a href="{{ route('main.kirim.print', $request) }}" target="__blank">
                                                             <flux:icon.printer class="hover:cursor-pointer hover:text-red-600" />
