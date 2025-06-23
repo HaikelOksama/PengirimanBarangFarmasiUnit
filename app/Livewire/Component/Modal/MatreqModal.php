@@ -61,7 +61,7 @@ class MatreqModal extends Component
         $options = [];
         if (strlen($this->searchFarmalkes) >= 2) {
             $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
-                ->limit(5)
+                ->limit(20)
                 ->select('id', 'nama', 'pbf_kode')->get();
                 // dd($options);
         }

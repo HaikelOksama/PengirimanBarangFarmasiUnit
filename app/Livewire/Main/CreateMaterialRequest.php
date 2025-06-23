@@ -60,10 +60,10 @@ class CreateMaterialRequest extends Component
     public function render()
     {
         $options = [];
-        if (strlen($this->searchFarmalkes) >= 2) {
+        if (strlen($this->searchFarmalkes) > 2) {
             $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
             ->select('id', 'nama', 'pbf_kode')
-                ->limit(5)->get();
+                ->limit(20)->get();
         }
 
         return view('livewire.main.create-material-request', compact('options'));
