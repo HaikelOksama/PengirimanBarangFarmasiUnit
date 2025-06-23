@@ -26,7 +26,7 @@
             <div class="flex justify-between border-b-1 border-black">
                 <p class=""><i>Tanggal</i> </p>
                 <strong
-                    class=" uppercase">{{ \Carbon\Carbon::parse($matreq->created_at)->isoFormat('dddd, DD MMMM Y') }}</strong>
+                    class=" uppercase">{{ \Carbon\Carbon::parse($matreq->tgl_buat ?? $matreq->created_at)->isoFormat('dddd, DD MMMM Y') }}</strong>
             </div>
             <div class="flex justify-between border-b-1 border-black">
                 <p class=""><i>No. Matreq</i> </p>

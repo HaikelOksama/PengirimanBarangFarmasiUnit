@@ -18,6 +18,9 @@ class CreateMaterialRequest extends Component
     public $searchFarmalkes = '';
     public $selected = null;
 
+    #[Validate('date|required')]
+    public $tglBuat;
+
     #[Validate(
         rule: 'required|exists:units,id',
     )]
@@ -27,6 +30,10 @@ class CreateMaterialRequest extends Component
         'required|array|min:1',
     )]
     public $requestList = [];
+
+        public function mount() {
+            $this->tglBuat = now();
+        }
 
     public function addFarmalkes() {
         $farmalkes = Farmalkes::find($this->selected);
@@ -73,7 +80,7 @@ class CreateMaterialRequest extends Component
         $matreq->toUnit()->associate($this->toUnit);
         $matreq->fromUnit()->associate(Auth::user()->unit_id);
         $serv = new MatreqService($matreq);
-        $serv->requestMatreq();
+        $serv->requestMatreq($this->tglBuat);
         $serv->syncItems($this->requestList);
         $this->reset('requestList', 'toUnit');
         $this->dispatch('success', 'Permintaan untuk unit ' . $matreq->toUnit->nama . ' berhasil dikirim');

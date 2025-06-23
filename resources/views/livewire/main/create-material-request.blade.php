@@ -1,16 +1,23 @@
 <div>
     <x-page-heading :title="__('Buat Permintaan Alkes dan Obat')" :subtitle="__('Ajukan permintaan baru ke unit')" />
 
-    <div class="w-1/2 ">
+    <div class="flex gap-5">
+        <div class="w-1/2 ">
+            <flux:field>
+                <flux:label badge="Required">Permintaan ke Unit</flux:label>
+                <flux:select wire:model="toUnit" placeholder="Pilih Unit...">
+                    <flux:select.option>-- Pilih Salah Satu --</flux:select.option>
+                    @foreach ($this->units as $unit)
+                        <flux:select.option value="{{ $unit->id }}">{{ $unit->nama }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <flux:error name="toUnit" />
+            </flux:field>
+        </div>
         <flux:field>
-            <flux:label badge="Required">Permintaan ke Unit</flux:label>
-            <flux:select wire:model="toUnit" placeholder="Pilih Unit...">
-                <flux:select.option>-- Pilih Salah Satu --</flux:select.option>
-                @foreach ($this->units as $unit)
-                    <flux:select.option value="{{ $unit->id }}">{{ $unit->nama }}</flux:select.option>
-                @endforeach
-            </flux:select>
-            <flux:error name="toUnit" />
+            <flux:label badge="Required">Tanggal</flux:label>
+            <flux:input type='date' wire:model='tglBuat'></flux:input>
+            <flux:error name="tglBuat" />
         </flux:field>
     </div>
 
@@ -87,7 +94,8 @@
                 </table>
             </div>
             <flux:error name="requestList" />
-            <button class="btn btn-primary btn-outline border" wire:click="submit" wire:confirm="Kirim permintaan farmalkes ?">Kirim Permintaan</button>
+            <button class="btn btn-primary btn-outline border" wire:click="submit"
+                wire:confirm="Kirim permintaan farmalkes ?">Kirim Permintaan</button>
         </div>
     </div>
 </div>

@@ -57,10 +57,11 @@ class MatreqService {
             ->delete();
     }
 
-    public function requestMatreq() {
+    public function requestMatreq($tglBuat) {
         $code = self::generateMatreqNum($this->matreq, MatreqType::REQUEST);
         $this->matreq->matreq_no = $code;
         $this->matreq->status = MatreqStatus::REQUEST->value;
+        $this->matreq->tgl_buat = $tglBuat;
         $this->matreq->save();
     }
 
