@@ -2,7 +2,7 @@
     {{-- A good traveler has no fixed plans and is not intent upon arriving. --}}
     <x-page-heading :title="__('Barang Farmalkes')" :subtitle="__('Daftar Barang Farmalkes')" />
 
-    <div class="overflow-x-auto">
+    <div class="overflow-x-scroll">
         <div class="py-2 border rounded-2xl my-5 overflow-x-auto">
             <div class="flex px-5 border-b-1 pb-2 gap-5">
                 <fieldset class="fieldset">

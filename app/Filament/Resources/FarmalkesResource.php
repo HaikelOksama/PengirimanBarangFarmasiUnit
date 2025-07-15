@@ -37,7 +37,7 @@ class FarmalkesResource extends Resource
                 TextInput::make('kemasan')->required(),
                 TextInput::make('harga_beli')->numeric()->required(),
                 TextInput::make('hna')->prefix('Rp. ')->numeric()->required(),
-                TextInput::make('diskon')->prefix('%')->numeric()->required(),
+                TextInput::make('diskon')->prefix('%')->numeric()->inputMode('decimal')->step('0.01')->required(),
                 TextInput::make('ppn')->prefix('%')->default(0)->nullable(),
             ]);
     }

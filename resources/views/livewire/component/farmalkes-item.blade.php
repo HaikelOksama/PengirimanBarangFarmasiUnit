@@ -31,7 +31,7 @@
         <div x-show="edit" class="flex gap-2">
             <flux:input size="xs" type="text" wire:model.defer="nama" class="input-sm" />
         </div>
-        <div x-show="!edit" class="flex items-center">
+        <div x-show="!edit" class="flex items-center text-sm">
             {{ $farmalkes->nama }}
         </div>
     </td>

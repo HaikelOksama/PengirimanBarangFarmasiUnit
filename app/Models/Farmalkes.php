@@ -10,4 +10,7 @@ class Farmalkes extends Model
         return $this->belongsTo(Pbf::class, 'pbf_kode', 'kode');
     }
     
+    protected $casts = [
+        'diskon' => 'float', // or 'decimal:2'
+    ];
 }
