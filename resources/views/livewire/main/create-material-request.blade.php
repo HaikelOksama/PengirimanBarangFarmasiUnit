@@ -31,7 +31,7 @@
 
                 <ul x-show="open && search.length >= 2"
                     class="absolute z-999 bg-white dark:bg-amber-900 w-full mt-1 border rounded-lg max-h-60 overflow-y-auto">
-                    @forelse ($options as $opt)
+                    {{-- @forelse ($options as $opt)
                         <li @click="selected = '{{ $opt->id }}'; search = '{{ $opt->nama }}'; open = false"
                             class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer"
                             wire:key="option-{{ $opt->id }}">
@@ -39,7 +39,17 @@
                         </li>
                     @empty
                         <li class="px-4 py-2 text-gray-500">No results found.</li>
+                    @endforelse --}}
+                    @forelse ($options as $opt)
+                        <li @click="selected = '{{ $opt->kode }}'; search = '{{ $opt->nama }}'; open = false"
+                            class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer"
+                            wire:key="option-{{ $opt->kode }}">
+                            {{ $opt->nama }} <--> {{ $opt->pbf->nama ?? $opt->pbf_kode }}
+                        </li>
+                    @empty
+                        <li class="px-4 py-2 text-gray-500">No results found.</li>
                     @endforelse
+                    <li wire:loading wire:target='searchFarmalkes' class="px-4 py-2 text-green-500 fw-bold">Mengambil data... <flux:icon.loading /></li>
                 </ul>
                 <button class="btn join-item btn-accent" wire:click="addFarmalkes"
                     x-bind:disabled="!selected">Tambah</button>

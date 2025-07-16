@@ -60,14 +60,15 @@
                                             class="absolute  bg-white dark:bg-amber-900 w-full mt-1 border rounded-lg max-h-60 overflow-y-auto"
                                             style="z-index: 999999999999;">
                                             @forelse ($options as $opt)
-                                                <li @click="selected = '{{ $opt->id }}'; search = '{{ $opt->nama }}'; open = false"
+                                                <li @click="selected = '{{ $opt->kode }}'; search = '{{ $opt->nama }}'; open = false"
                                                     class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer"
-                                                    wire:key="option-{{ $opt->id }}">
-                                                    {{ $opt->nama }} <--> {{ $opt->pbf->nama }}
+                                                    wire:key="option-{{ $opt->kode }}">
+                                                    {{ $opt->nama }} <--> {{ $opt->pbf->nama ?? $opt->pbf_kode }}
                                                 </li>
                                             @empty
                                                 <li class="px-4 py-2 text-gray-500">No results found.</li>
                                             @endforelse
+                                                <li wire:loading wire:target='searchFarmalkes' class="px-4 py-2 text-green-500 fw-bold">Mengambil data... <flux:icon.loading /></li>
                                         </ul>
                                         <button class="btn join-item btn-accent mt-4"
                                             wire:click="changeFarmalkes({{ $item->farmalkes->id }})"
@@ -94,10 +95,12 @@
                                         {{ $item->farmalkes->nama }}</span>
                                     @if($matreq->status == \App\Enums\MatreqStatus::REQUEST->value)
                                         <div class="flex">
+                                            @if($matreq->items->count() > 1)
                                             <flux:icon.trash class="hover:text-red-700 hover:cursor-pointer" variant="mini"
                                                 wire:confirm="Hapus Obat {{ $item->farmalkes->nama }} dari Kiriman ?"
                                                 wire:click="removeItem({{ $item->id }})">
                                             </flux:icon.trash>
+                                            @endif
                                             <flux:modal.trigger name="edit-farmalkes-{{ $item->id }}-{{ $matreq->id }}">
                                                 <flux:icon.pencil-square class="hover:text-yellow-700 hover:cursor-pointer"
                                                     variant="mini"></flux:icon.pencil-square>
@@ -204,10 +207,10 @@
                         class="absolute  bg-white dark:bg-amber-900 w-full mt-1 border rounded-lg max-h-60 overflow-y-auto"
                         style="z-index: 999999999999;">
                         @forelse ($options as $opt)
-                            <li @click="selected = '{{ $opt->id }}'; search = '{{ $opt->nama }}'; open = false"
+                            <li @click="selected = '{{ $opt->kode }}'; search = '{{ $opt->nama }}'; open = false"
                                 class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer"
-                                wire:key="option-{{ $opt->id }}">
-                                {{ $opt->nama }} <--> {{ $opt->pbf->nama }}
+                                wire:key="option-{{ $opt->kode }}">
+                                {{ $opt->nama }} <--> {{ $opt->pbf->nama ?? $opt->pbf_kode }}
                             </li>
                         @empty
                             <li class="px-4 py-2 text-gray-500">No results found.</li>

@@ -4,7 +4,9 @@ namespace App\Livewire\Main;
 
 use App\Models\Farmalkes;
 use App\Models\Matreq;
+use App\Models\Pbf;
 use App\Models\Unit;
+use App\Services\DatabarangService;
 use App\Services\MatreqService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
@@ -31,28 +33,39 @@ class CreateMaterialRequest extends Component
     )]
     public $requestList = [];
 
-        public function mount() {
-            $this->tglBuat = now();
-        }
+    private DatabarangService $databarangService;
 
-    public function addFarmalkes() {
-        $farmalkes = Farmalkes::find($this->selected);
+    public function mount()
+    {
+        $this->tglBuat = now();
+    }
+
+    public function boot()
+    {
+        $this->databarangService = new DatabarangService();
+    }
+
+    public function addFarmalkes()
+    {
+        $farmalkes = $this->databarangService->syncWithLocalSingle($this->selected);
+
+        // dd($farmalkes);
+        // $farmalkes = Farmalkes::find($this->selected); local
         $this->selected = null;
         $this->searchFarmalkes = '';
-        if(!empty($this->requestList)) {
+        if (!empty($this->requestList)) {
             foreach ($this->requestList as &$item) {
-                if($item['data']->id == $farmalkes->id) {
+                if ($item['data']->id == $farmalkes['data']['id']) {
                     $item['qty'] = $item['qty'] + 1;
                     return;
                 }
             }
-        } 
-        $this->requestList[] = ['data' => $farmalkes, 'qty' => 1];
-        
-
+        }
+        $this->requestList[] = ['data' => $farmalkes['data'], 'qty' => 1];
     }
 
-    public function unsetFarmalkes($index) {
+    public function unsetFarmalkes($index)
+    {
         unset($this->requestList[$index]);
         $this->requestList = array_values($this->requestList);
     }
@@ -61,20 +74,29 @@ class CreateMaterialRequest extends Component
     {
         $options = [];
         if (strlen($this->searchFarmalkes) > 2) {
-            $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
-            ->select('id', 'nama', 'pbf_kode')
-                ->limit(20)->get();
+            try {
+                $options = $this->databarangService->getFromRemote($this->searchFarmalkes)->map(function ($item) {
+                    $item->pbf_kode = Pbf::select('id', 'kode', 'nama')->where('kode', $item->pbf_kode)->first()->nama ?? '-';
+                    return $item;
+                });
+            } catch (\Throwable $th) {
+                $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
+                    ->select('id','kode', 'nama', 'pbf_kode')
+                    ->limit(20)->get();
+            }
         }
 
         return view('livewire.main.create-material-request', compact('options'));
     }
 
     #[Computed(persist: true)]
-    public function units() {
+    public function units()
+    {
         return Unit::where('id', '!=', Auth::user()->unit_id)->select('id', 'nama')->get();
     }
 
-    public function submit() {
+    public function submit()
+    {
         $this->validate();
         $matreq = new Matreq();
         $matreq->toUnit()->associate($this->toUnit);
