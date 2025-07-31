@@ -1,0 +1,19 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-Bjgx4OZJ.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/alert.js": {
+    "file": "assets/alert-1qTJlpm1.js",
+    "name": "alert",
+    "src": "resources/js/alert.js",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-l0sNRNKZ.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
