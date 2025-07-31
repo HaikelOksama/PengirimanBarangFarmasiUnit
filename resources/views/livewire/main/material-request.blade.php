@@ -3,14 +3,14 @@
     <x-page-heading :title="__('Material Request')" :subtitle="__('Daftar Permintaan Alkes dan Obat')" />
 
     @unlessrole('admin')
-    <a href="{{ route('main.material-request.create') }}" class="btn btn-accent">Buat permintaan ke unit</a>
+        <a href="{{ route('main.material-request.create') }}" class="btn btn-accent">Buat permintaan ke unit</a>
     @endunlessrole
     <div class="overflow-x-auto">
         <div class="py-2 border rounded-2xl my-5">
             <div class="flex px-5 border-b-1 pb-2 gap-5 flex-wrap">
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend dark:text-slate-100">Unit</legend>
-                    <select  wire:model.live="unitQ" class="select  rounded-0">
+                    <select wire:model.live="unitQ" class="select  rounded-0">
                         <option value="" selected>--------</option>
                         @foreach ($this->units() as $key => $unit)
                             <option value="{{ $key }}">{{ $unit }}</option>
@@ -34,10 +34,11 @@
                 </fieldset>
                 <fieldset class="fieldset">
                     <legend class="fieldset-legend dark:text-slate-100">Tanggal Dari - Sampai</legend>
-                    <div class="join" x-data="{ min: @entangle('startDate'), max: '{{ date('Y-m-d') }}'  }">
+                    <div class="join" x-data="{ min: @entangle('startDate'), max: '{{ date('Y-m-d') }}' }">
                         <input type="date" wire:model.live="startDate" class="input join-item"
                             :max="{{ date('Y-m-d') }}">
-                        <input x-bind:disabled="min == ''" type="date" wire:model.live="endDate" class="input join-item" :min="min" :max="{{ date('Y-m-d') }}">
+                        <input x-bind:disabled="min == ''" type="date" wire:model.live="endDate"
+                            class="input join-item" :min="min" :max="{{ date('Y-m-d') }}">
                     </div>
 
                 </fieldset>
@@ -49,7 +50,7 @@
                         <th>Tanggal</th>
                         <th>Nomor</th>
                         @role('admin')
-                        <th>Permintaan Dari Unit</th>
+                            <th>Permintaan Dari Unit</th>
                         @endrole
                         <th>Ke Unit</th>
                         <th>Status</th>
@@ -63,7 +64,7 @@
                             <td>
                                 <div class="flex">
                                     {{ $loop->iteration }}
-                                    @if($request->status == \App\Enums\MatreqStatus::REQUEST->value)
+                                    @if ($request->status == \App\Enums\MatreqStatus::REQUEST->value)
                                         <span>
                                             <flux:icon.mail-question class="ms-2 text-red-300" />
                                         </span>
@@ -85,31 +86,26 @@
                                 {{ $request->matreq_no }}
                             </td>
                             @role('admin')
-                            <td>
-                                {{ $request->fromUnit->nama }}
-                            </td>
+                                <td>
+                                    {{ $request->fromUnit->nama }}
+                                </td>
                             @endrole
                             <td>
                                 {{ $request->toUnit->nama }}
                             </td>
                             <td>
                                 <div @class([
-                                    "badge", 
-                                    "badge-accent" => $request->status == \App\Enums\MatreqStatus::REQUEST->value,
-                                    "badge-info" => $request->status == \App\Enums\MatreqStatus::KIRIM->value,
-                                    "badge-success" => $request->status == \App\Enums\MatreqStatus::SELESAI->value,
+                                    'badge',
+                                    'badge-accent' =>
+                                        $request->status == \App\Enums\MatreqStatus::REQUEST->value,
+                                    'badge-info' => $request->status == \App\Enums\MatreqStatus::KIRIM->value,
+                                    'badge-success' =>
+                                        $request->status == \App\Enums\MatreqStatus::SELESAI->value,
                                 ])>
                                     {{ \App\Enums\MatreqStatus::from($request->status)->label() ?? $request->status }}
                                 </div>
                             </td>
                             <td>
-                                {{-- <flux:modal.trigger :name="'show-items-' . $request->id">
-                                    <flux:button>
-                                        {{ $request->items()->count() }}
-                                        Item
-                                        <flux:icon.eye variant="mini" class="ms-2" />
-                                    </flux:button>
-                                </flux:modal.trigger> --}}
                                 <livewire:component.modal.matreq-modal lazy :matreq="$request" :key="'show-items-modal' . $request->id" />
                             </td>
                             <td>
@@ -117,7 +113,9 @@
                                     <flux:modal.trigger :name="'show-items-' . $request->id">
                                         <flux:icon.pencil-square class="hover:cursor-pointer hover:text-yellow-700" />
                                     </flux:modal.trigger>
-                                    <flux:icon.printer x-on:click="function() { window.open('{{ route('main.material-request.print', $request) }}', '_blank') }" class="hover:cursor-pointer hover:text-red-600"/>
+                                    <flux:icon.printer
+                                        x-on:click="function() { window.open('{{ route('main.material-request.print', $request) }}', '_blank') }"
+                                        class="hover:cursor-pointer hover:text-red-600" />
                                     @if ($request->status == \App\Enums\MatreqStatus::REQUEST->value)
                                         <flux:icon.trash class="hover:cursor-pointer hover:text-red-700"
                                             wire:click="destroy({{ $request->id }})"
@@ -126,23 +124,34 @@
                                 </div>
                             </td>
                         </tr>
-                        @if($request->status != \App\Enums\MatreqStatus::REQUEST->value)
-                            <tr @class(["hover:bg-gray-200 dark:hover:bg-zinc-700", "bg-blue-200 dark:bg-amber-800" => $request->status == \App\Enums\MatreqStatus::KIRIM->value, "bg-green-200 dark:bg-green-800" => $request->status == \App\Enums\MatreqStatus::SELESAI->value])>
+                        @if ($request->status != \App\Enums\MatreqStatus::REQUEST->value)
+                            <tr @class([
+                                'hover:bg-gray-500 dark:hover:bg-zinc-700',
+                                'bg-blue-200 dark:bg-amber-800' =>
+                                    $request->status == \App\Enums\MatreqStatus::KIRIM->value,
+                                'bg-green-200 dark:bg-green-800' =>
+                                    $request->status == \App\Enums\MatreqStatus::SELESAI->value,
+                            ])>
                                 <td><flux:icon.corner-down-right /></td>
                                 <td colspan="2">Dikirim Pada {{ $request->updated_at->format('d-m-Y H:i') }}</td>
                                 <td colspan="2">Nomor Pengiriman : {{ $request->kirim_no }}</td>
                                 <td colspan="2">
-                                    @if($request->status == \App\Enums\MatreqStatus::KIRIM->value)
-                                        <button class="btn btn-accent border rounded" wire:confirm="Terima Kiriman {{ $request->matreq_no }} ?" wire:click="receive({{ $request->id }})">
-                                            Terima Kiriman
-                                        </button>
-                                        {{-- <flux:button variant="outline" class="bg-green-600"
-                                            wire:click="receive({{ $request->id }})">
-                                            Terima Kiriman
-                                        </flux:button> --}}
-                                    @elseif ($request->status == \App\Enums\MatreqStatus::SELESAI->value)
-                                        <flux:button disabled variant="filled" class="bg-green-600">Sudah Selesai</flux:button>
-                                    @endif
+                                    <div class="join">
+                                        @if ($request->status == \App\Enums\MatreqStatus::KIRIM->value)
+                                            <button class="btn btn-sm btn-accent border rounded join-item"
+                                                wire:confirm="Terima Kiriman {{ $request->matreq_no }} ?"
+                                                wire:click="receive({{ $request->id }})">
+                                                Terima Kiriman
+                                            </button>
+                                        @elseif ($request->status == \App\Enums\MatreqStatus::SELESAI->value)
+                                            <flux:button disabled variant="filled" class="bg-green-600  join-item">Sudah
+                                                Selesai</flux:button>
+                                            @if ($request->fromUnit->id == auth()->user()->unit_id)
+                                                <livewire:component.modal.retur-modal :matreq="$request"
+                                                    :key="'show-retur-modal' . $request->id" />
+                                            @endif
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endif

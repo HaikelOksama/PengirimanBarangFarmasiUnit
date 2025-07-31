@@ -6,29 +6,33 @@ use App\Enums\MatreqStatus;
 use App\Enums\MatreqType;
 use App\Models\Matreq;
 use App\Models\MatreqItems;
+use App\Models\Retur;
+use App\Models\ReturItem;
 use App\Models\Unit;
+use Illuminate\Support\Facades\DB;
 
-class MatreqService {
+class MatreqService
+{
 
     public function __construct(public Matreq $matreq) {}
-    
+
 
     public function syncItems(array $items)
     {
 
-        
-    // public function calculateSubtotal() {
-    //     return $this->pesan * $this->farmalkes->hna;
-    // }
 
-    // public function calculateTotal() {
-    //     return $this->calculateSubtotal() - ($this->calculateSubtotal() * $this->farmalkes->diskon / 100);
-    // }
+        // public function calculateSubtotal() {
+        //     return $this->pesan * $this->farmalkes->hna;
+        // }
+
+        // public function calculateTotal() {
+        //     return $this->calculateSubtotal() - ($this->calculateSubtotal() * $this->farmalkes->diskon / 100);
+        // }
         $matchedIds = [];
         foreach ($items as $itemData) {
             $farmalkes = $itemData['data'];
             $qty = $itemData['qty'];
-    
+
             // Try to update existing item for this matreq and farmalkes_id
             $matreqItem = MatreqItems::updateOrCreate(
                 [
@@ -47,17 +51,18 @@ class MatreqService {
                     'isi' => $farmalkes->isi
                 ]
             );
-            
+
             $matchedIds[] = $matreqItem->id;
         }
-    
+
         // Optional: Delete matreq items that were not included in the sync
         $this->matreq->items()
             ->whereNotIn('id', $matchedIds)
             ->delete();
     }
 
-    public function requestMatreq($tglBuat) {
+    public function requestMatreq($tglBuat)
+    {
         $code = self::generateMatreqNum($this->matreq, MatreqType::REQUEST);
         $this->matreq->matreq_no = $code;
         $this->matreq->status = MatreqStatus::REQUEST->value;
@@ -65,7 +70,8 @@ class MatreqService {
         $this->matreq->save();
     }
 
-    public function sendMatreq() {
+    public function sendMatreq()
+    {
         $code = self::generateMatreqNum($this->matreq, MatreqType::KIRIM);
         $this->matreq->kirim_no = $code;
         $this->matreq->status = MatreqStatus::KIRIM->value;
@@ -73,28 +79,49 @@ class MatreqService {
         $this->matreq->save();
     }
 
-    public function sendMatreqItem(MatreqItems $matreqItems, int $nominalKirim) {
+    public function sendMatreqItem(MatreqItems $matreqItems, int $nominalKirim)
+    {
         $matreqItems->kirim = $nominalKirim;
         $matreqItems->subtotal_harga = $matreqItems->calculateSubtotal();
         $matreqItems->save();
     }
 
-    public static function generateMatreqNum(Matreq $matreq, MatreqType $type) {
+    public static function generateMatreqNum(Matreq $matreq, MatreqType $type)
+    {
         $now = now(); // or Carbon::now()
         $month = $now->format('m');
         $year = $now->format('Y');
-    
+
         // Count existing matreqs in this month & year
         $count = Matreq::whereYear('created_at', $year)
             ->whereMonth('created_at', $month)
             ->where('to_unit_id', $matreq->to_unit_id)
             ->count() + 1;
-    
+
         $number = str_pad($count, 5, '0', STR_PAD_LEFT); // 00001, 00002, etc.
         if ($type == MatreqType::KIRIM) {
             return "KRU/{$matreq->toUnit->code}/{$number}{$month}{$year}";
-        }else {
+        } else {
             return "MRU/{$matreq->fromUnit->code}/{$number}-{$month}{$year}";
         }
+    }
+
+    public function retur(array $returItems, $tglRetur, $keterangan) : void
+    {
+        DB::transaction(function () use ($returItems, $tglRetur, $keterangan) {
+            $retur = new Retur();
+            $retur->matreq()->associate($this->matreq);
+            $retur->tgl_retur = $tglRetur;
+            $retur->keterangan = $keterangan;
+            $retur->save();
+            // dd($returItems);
+            foreach ($returItems as $data ) {
+                $returItem = new ReturItem();
+                $returItem->retur()->associate($retur);
+                $returItem->farmalkes_id = $data['item']->farmalkes_id;
+                $returItem->qty = $data['qty'];
+                $returItem->save();
+            }
+        });
     }
 }

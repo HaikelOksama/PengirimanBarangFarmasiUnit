@@ -72,7 +72,7 @@ class MatreqModal extends Component
                 $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
                     ->select('id','kode', 'nama', 'pbf_kode')
                     ->limit(20)->get();
-            }
+            } 
         }
         return view('livewire.component.modal.matreq-modal', compact('options'));
     }
@@ -140,6 +140,7 @@ class MatreqModal extends Component
         });
         $this->dispatch('success', 'Item berhasil ditambahkan');
     }
+
 
     public function changeFarmalkes($id) {
         $current = Farmalkes::find($id);

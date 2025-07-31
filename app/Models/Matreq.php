@@ -28,6 +28,10 @@ class Matreq extends Model
         return $this->hasMany(MatreqItems::class);
     }
 
+    public function retur() : HasMany {
+        return $this->hasMany(Retur::class, 'matreqs_id', 'id');
+    }
+
     public function calculateSubtotal() {
         return $this->items()->sum('subtotal_harga');
     }
@@ -35,6 +39,8 @@ class Matreq extends Model
     public function calculateTotal() {
         return $this->items()->sum('total_harga');
     }
+
+
 
     #[Scope()]
     public function search(Builder $query, $searchQ) {
