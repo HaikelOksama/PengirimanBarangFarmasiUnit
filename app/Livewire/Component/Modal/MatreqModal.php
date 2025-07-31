@@ -29,8 +29,10 @@ class MatreqModal extends Component
     public $items = [];
 
     public function mount(Matreq $matreq) {
-        $this->matreq = $matreq->loadMissing('fromUnit', 'toUnit', 'items.farmalkes.pbf');
-        $this->items = Arr::mapWithKeys($matreq->items->select('id','pesan', 'kirim', 'subtotal_harga', 'total_harga', 'hna', 'diskon')->toArray(), function($item) {
+        $matreq->loadMissing('fromUnit', 'toUnit', 'items.farmalkes.pbf');
+        $this->matreq = $matreq;
+        
+        $this->items = Arr::mapWithKeys($matreq->items->loadMissing('farmalkes.pbf', 'matreq.fromUnit', 'matreq.toUnit')->select('id','pesan', 'kirim', 'subtotal_harga', 'total_harga', 'hna', 'diskon')->toArray(), function($item) {
             return [$item['id'] => $item];
         });
     }
@@ -62,17 +64,18 @@ class MatreqModal extends Component
     public function render()
     {
         $options = [];
+        $pbfMap = Pbf::select('kode', 'nama')->get()->keyBy('kode');
         if (strlen($this->searchFarmalkes) > 2) {
             try {
-                $options = $this->databarangService->getFromRemote($this->searchFarmalkes)->map(function ($item) {
-                    $item->pbf_kode = Pbf::select('id', 'kode', 'nama')->where('kode', $item->pbf_kode)->first()->nama ?? '-';
+                $options = $this->databarangService->getFromRemote($this->searchFarmalkes)->map(function ($item) use ($pbfMap) {
+                    $item->pbf_kode = $pbfMap[$item->pbf_kode]->nama ?? '-';
                     return $item;
                 });
             } catch (\Throwable $th) {
                 $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
                     ->select('id','kode', 'nama', 'pbf_kode')
                     ->limit(20)->get();
-            } 
+            }
         }
         return view('livewire.component.modal.matreq-modal', compact('options'));
     }

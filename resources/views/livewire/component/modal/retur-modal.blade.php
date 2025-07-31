@@ -101,18 +101,10 @@
                 wire:confirm="Kirim Retur ke {{ $matreq->fromUnit->nama }} ?" wire:click="submitRetur">
                 Kirim retur barang
             </flux:button>
-            <livewire:component.modal.retur-list-modal :matreq="$matreq" :key="'retur-list-base'.$matreq->id"/> 
+            {{-- <livewire:component.modal.retur-list-modal :matreq="$matreq" :key="'retur-list-base'.$matreq->id"/>  --}}
             </div>
           
         </div>
         
     </flux:modal>
 </div>
-
-@assets
-    <style>
-        dialog {
-            /* min-width: 80% !important; */
-        }
-    </style>
-@endassets

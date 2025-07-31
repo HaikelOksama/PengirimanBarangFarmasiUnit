@@ -32,7 +32,7 @@
 
                 @endif
             </div>
-            <div>
+            <div class="max-h-96 overflow-y-scroll">
                 @foreach ($matreq->items as $item)
                     @if($matreq->status == \App\Enums\MatreqStatus::REQUEST->value)
                         <flux:modal name="edit-farmalkes-{{ $item->id }}-{{ $matreq->id }}" class="md:w-100"

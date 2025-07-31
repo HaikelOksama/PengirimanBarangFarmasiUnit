@@ -126,7 +126,7 @@
                         </tr>
                         @if ($request->status != \App\Enums\MatreqStatus::REQUEST->value)
                             <tr @class([
-                                'hover:bg-gray-500 dark:hover:bg-zinc-700',
+                                'hover:bg-gray-300 dark:hover:bg-zinc-700',
                                 'bg-blue-200 dark:bg-amber-800' =>
                                     $request->status == \App\Enums\MatreqStatus::KIRIM->value,
                                 'bg-green-200 dark:bg-green-800' =>
@@ -147,12 +147,23 @@
                                             <flux:button disabled variant="filled" class="bg-green-600  join-item">Sudah
                                                 Selesai</flux:button>
                                             @if ($request->fromUnit->id == auth()->user()->unit_id)
-                                                <livewire:component.modal.retur-modal :matreq="$request"
+                                                <livewire:component.modal.retur-modal @success="$refresh" :matreq="$request"
                                                     :key="'show-retur-modal' . $request->id" />
                                             @endif
                                         @endif
                                     </div>
                                 </td>
+                            </tr>
+                        @endif
+                        @if ($request->retur()->count() > 0)
+                            <tr class="bg-blue-950 hover:bg-blue-900">
+                                <td><flux:icon.corner-down-right class="text-zinc-50"/></td>
+                                <td colspan="4" class="text-zinc-50">Ada item yang diretur</td>
+                                <td >
+                                    <livewire:component.modal.retur-list-modal :matreq="$request" lazy/> 
+
+                                </td>
+                                <td></td>
                             </tr>
                         @endif
                     @empty

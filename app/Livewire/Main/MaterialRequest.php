@@ -33,7 +33,7 @@ class MaterialRequest extends Component
 
     public function render()
     {  
-        $matreq = Matreq::with('fromUnit', 'toUnit', 'items.farmalkes.pbf')
+        $matreq = Matreq::with('fromUnit', 'toUnit', 'items.farmalkes.pbf', 'retur')
         ->when(!Auth::user()->hasRole('admin'), function($query) {
             $query->where('from_unit_id', Auth::user()->unit_id);
         })

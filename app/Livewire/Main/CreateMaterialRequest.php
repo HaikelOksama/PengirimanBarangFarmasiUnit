@@ -32,12 +32,15 @@ class CreateMaterialRequest extends Component
         'required|array|min:1',
     )]
     public $requestList = [];
+    private $pbfMap;
 
     private DatabarangService $databarangService;
 
     public function mount()
     {
         $this->tglBuat = now();
+        $pbfMap = Pbf::select('kode', 'nama')->get()->keyBy('kode');
+        $this->pbfMap = $pbfMap;
     }
 
     public function boot()
@@ -73,10 +76,11 @@ class CreateMaterialRequest extends Component
     public function render()
     {
         $options = [];
+        $pbfMap = $this->pbfMap;
         if (strlen($this->searchFarmalkes) > 2) {
             try {
-                $options = $this->databarangService->getFromRemote($this->searchFarmalkes)->map(function ($item) {
-                    $item->pbf_kode = Pbf::select('id', 'kode', 'nama')->where('kode', $item->pbf_kode)->first()->nama ?? '-';
+                $options = $this->databarangService->getFromRemote($this->searchFarmalkes)->map(function ($item) use ($pbfMap) {
+                    $item->pbf_kode = $pbfMap[$item->pbf_kode]->nama ?? '-';
                     return $item;
                 });
             } catch (\Throwable $th) {

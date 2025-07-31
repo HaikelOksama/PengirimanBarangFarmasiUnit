@@ -34,7 +34,7 @@ class ReturModal extends Component
     public function mount(Matreq $matreq)
     {
         $this->matreq = $matreq->loadMissing('fromUnit', 'toUnit', 'items.farmalkes.pbf');
-        $this->items = Arr::mapWithKeys($matreq->items->select('id', 'farmalkes_id', 'pesan', 'kirim', 'subtotal_harga', 'total_harga', 'hna', 'diskon')->toArray(), function ($item) {
+        $this->items = Arr::mapWithKeys($matreq->items->withRelationshipAutoloading()->select('id', 'farmalkes_id', 'pesan', 'kirim', 'subtotal_harga', 'total_harga', 'hna', 'diskon')->toArray(), function ($item) {
             return [$item['id'] => $item];
         });
     }

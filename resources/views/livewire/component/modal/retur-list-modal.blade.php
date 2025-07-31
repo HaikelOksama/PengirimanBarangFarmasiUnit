@@ -27,15 +27,18 @@
                         </div>
                         <div class="flex gap-2">
                             <flux:link href="{{ route('main.material-request.retur.print', $retur) }}" target="_blank"><flux:icon.printer/></flux:link>
+                            @if (!Auth::user()->hasRole('admin') && Auth::user()->unit->id != $retur->matreq->toUnit->id)
                             <flux:icon.trash class="hover:text-red-700 hover:cursor-pointer" variant="mini"
                                 wire:click="delete({{ $retur }})"
                                 wire:confirm="Hapus Retur ?"></flux:icon.trash>
+                                
+                            @endif
                         </div>
                     </div>
                     <flux:textarea rows="1" disabled label="Keterangan">{{$retur->keterangan}}</flux:textarea>
                     <flux:text>Barang - barang : </flux:text>
                     <div class="border border-base-content/5 ">
-                        <table class="table table-zebra ">
+                        <table class="table">
                             <thead>
                                 <tr class="dark:text-zinc-300">
                                     <th>#</th>

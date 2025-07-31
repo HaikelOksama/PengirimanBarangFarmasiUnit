@@ -12,7 +12,7 @@ class ReturListModal extends Component
     public Matreq $matreq;
 
     public function mount(Matreq $matreq) {
-        $matreq->loadMissing('fromUnit', 'toUnit', 'items.farmalkes.pbf', 'retur');
+        $matreq->automaticallyEagerLoadRelationships();
         $this->matreq = $matreq;
     }
 
