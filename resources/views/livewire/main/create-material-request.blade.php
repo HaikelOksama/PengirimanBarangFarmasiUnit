@@ -31,15 +31,6 @@
 
                 <ul x-show="open && search.length >= 2"
                     class="absolute z-999 bg-white dark:bg-amber-900 w-full mt-1 border rounded-lg max-h-60 overflow-y-auto">
-                    {{-- @forelse ($options as $opt)
-                        <li @click="selected = '{{ $opt->id }}'; search = '{{ $opt->nama }}'; open = false"
-                            class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer"
-                            wire:key="option-{{ $opt->id }}">
-                            {{ $opt->nama }} <--> {{ $opt->pbf->nama }}
-                        </li>
-                    @empty
-                        <li class="px-4 py-2 text-gray-500">No results found.</li>
-                    @endforelse --}}
                     @forelse ($options as $opt)
                         <li @click="selected = '{{ $opt->kode }}'; search = '{{ $opt->nama }}'; open = false"
                             class="px-4 py-2 hover:bg-blue-100 dark:hover:bg-amber-800 cursor-pointer"
@@ -100,7 +91,6 @@
                             </tr>
                         @endforelse
                     </tbody>
-
                 </table>
             </div>
             <flux:error name="requestList" />

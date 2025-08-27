@@ -1,6 +1,6 @@
 <div class="flex flex-col h-screen">
     {{-- If you look to others for fulfillment, you will never truly be fulfilled. --}}
-    <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
+    <flux:sidebar.toggle class="lg:hidden float-end" icon="x-mark" />
 
     <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
         <x-app-logo />
@@ -23,6 +23,11 @@
                 @if($kirimRequest > 0)
                     <div class="ms-2 badge badge-sm badge-error rounded-full px-1.5">{{ $kirimRequest }}</div>
                 @endif
+            </flux:navlist.item>
+            <flux:navlist.item icon="bolt" :href="route('main.obat-expired.index')"
+                :current="request()->routeIs('obat-expired/*')" wire:navigate>
+                Obat Expire
+                
             </flux:navlist.item>
         </flux:navlist.group>
         @role('admin|superadmin')

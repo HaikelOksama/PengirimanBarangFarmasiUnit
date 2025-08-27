@@ -16,6 +16,7 @@ class DatabarangService {
             'search' => $query
         ]);
         $data = $res->json();
+        // dd($data);
         // dd($data['data']);
         return collect($data['data'])->map(fn($item) => new RemoteDatabarang($item));
     }

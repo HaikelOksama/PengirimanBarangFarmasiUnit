@@ -17,7 +17,7 @@ class ReturModal extends Component
     protected MatreqService $service;
     private ?Retur $retur;
     public $items = [];
-    
+
     public $returItems = [];
     public $tglRetur;
     public $keterangan;
@@ -84,16 +84,17 @@ class ReturModal extends Component
         unset($this->returItems[$id]);
     }
 
-    public function submitRetur() {
+    public function submitRetur()
+    {
         // dd($this->returItems);
-        $validator = $this->validateQty();
-
-        if (!$validator->fails()) {
-            $this->service->retur($this->returItems, $this->tglRetur, $this->keterangan);
-            $this->dispatch('success', 'Retur berhasil dikirim');
-            $this->reset('returItems', 'tglRetur', 'keterangan');
-            $this->dispatch('refresh-list')->to(ReturListModal::class);
-        }
+        // $validator = $this->validateQty();
+        $this->validate();
+        // if (!$validator->fails()) {
+        $this->service->retur($this->returItems, $this->tglRetur, $this->keterangan);
+        $this->dispatch('success', 'Retur berhasil dikirim');
+        $this->reset('returItems', 'tglRetur', 'keterangan');
+        $this->dispatch('refresh-list')->to(ReturListModal::class);
+        // }
     }
 
     public function render()
@@ -101,18 +102,19 @@ class ReturModal extends Component
         return view('livewire.component.modal.retur-modal');
     }
 
-    private function validateQty() {
+    private function validateQty()
+    {
         $baseRules = $this->rules();
 
         // Perform base validation first
         $this->validate($baseRules);
-    
+
         // Build a new validator for dynamic max rules
         $validator = Validator::make(
             ['returItems' => $this->returItems],
             [], // We'll validate manually below
         );
-    
+
         foreach ($this->returItems as $itemId => $data) {
             $max = $this->items[$itemId]['kirim'] ?? 0;
             // dd($max);
@@ -122,7 +124,7 @@ class ReturModal extends Component
                 }
             });
         }
-    
+
         if ($validator->fails()) {
             $this->setErrorBag($validator->errors());
         }

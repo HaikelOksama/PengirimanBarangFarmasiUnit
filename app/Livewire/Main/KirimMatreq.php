@@ -4,7 +4,7 @@ namespace App\Livewire\Main;
 
 use App\Models\Matreq;
 use App\Models\Unit;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;

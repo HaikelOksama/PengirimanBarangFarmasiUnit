@@ -160,7 +160,7 @@
                                 <td><flux:icon.corner-down-right class="text-zinc-50"/></td>
                                 <td colspan="4" class="text-zinc-50">Ada item yang diretur</td>
                                 <td >
-                                    <livewire:component.modal.retur-list-modal :matreq="$request" lazy/> 
+                                    <livewire:component.modal.retur-list-modal :key="'retur-list-base'.$request->id" :matreq="$request" lazy/> 
 
                                 </td>
                                 <td></td>

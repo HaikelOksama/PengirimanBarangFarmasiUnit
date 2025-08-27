@@ -2,55 +2,61 @@
 
 namespace App\Livewire\Main;
 
-use App\Models\Farmalkes;
-use App\Models\Matreq;
 use App\Models\Pbf;
-use App\Models\Unit;
+use App\Services\BarangExpireService;
 use App\Services\DatabarangService;
-use App\Services\MatreqService;
-use Illuminate\Support\Facades\Auth;
-use Livewire\Attributes\Computed;
-use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
-#[Title('Buat Permintaan Alkes dan Obat')]
-class CreateMaterialRequest extends Component
+class CreateObatExpired extends Component
 {
     public $searchFarmalkes = '';
     public $selected = null;
 
-    #[Validate('date|required')]
-    public $tglBuat;
+    #[Validate(
+        'required|date'
+    )]
+    public $tanggal;
 
     #[Validate(
-        rule: 'required|exists:units,id',
+        'required|string|max:255',
     )]
-    public $toUnit;
+    public $keterangan;
 
-    #[Validate(
-        'required|array|min:1',
-    )]
-    public $requestList = [];
     private $pbfMap;
 
-    private DatabarangService $databarangService;
+    #[Validate([
+        'requestList' => 'required|min:1',
+        'requestList.*.qty' => ['required', 'numeric', 'min:1'],
+        'requestList.*.expire_date' => ['required', 'date'],
+    ], message: [
+        'requestList.*.qty.required' => 'Kuantiti tidak boleh kosong',
+        'requestList.*.qty.min' => 'Kuantiti minimal 1',
+        'requestList.*.expire_date.required' => 'Tanggal kadaluarsa tidak boleh kosong',
+    ])]
+    public $requestList = [];
 
-    public function mount()
-    {
-        $this->tglBuat = now();
-        $pbfMap = Pbf::select('kode', 'nama')->get()->keyBy('kode');
-        $this->pbfMap = $pbfMap;
-    }
+
+    private DatabarangService $databarangService;
+    private BarangExpireService $barangExpireService;
 
     public function boot()
     {
         $this->databarangService = new DatabarangService();
+        $this->barangExpireService = new BarangExpireService();
+    }
+
+    public function mount()
+    {
+        $this->tanggal = now();
+        $pbfMap = Pbf::select('kode', 'nama')->get()->keyBy('kode');
+        $this->pbfMap = $pbfMap;
     }
 
     public function addFarmalkes()
     {
         $farmalkes = $this->databarangService->syncWithLocalSingle($this->selected);
+
         // dd($farmalkes);
         // $farmalkes = Farmalkes::find($this->selected); local
         $this->selected = null;
@@ -84,30 +90,29 @@ class CreateMaterialRequest extends Component
                 });
             } catch (\Throwable $th) {
                 $options = Farmalkes::with('pbf')->where('nama', 'like', '%' . $this->searchFarmalkes . '%')
-                    ->select('id','kode', 'nama', 'pbf_kode')
+                    ->select('id', 'kode', 'nama', 'pbf_kode')
                     ->limit(20)->get();
             }
         }
 
-        return view('livewire.main.create-material-request', compact('options'));
+        return view('livewire.main.create-obat-expired', compact('options'));
     }
 
-    #[Computed(persist: true)]
-    public function units()
-    {
-        return Unit::where('id', '!=', Auth::user()->unit_id)->select('id', 'nama')->get();
-    }
-
-    public function submit()
+    public function submit(): void
     {
         $this->validate();
-        $matreq = new Matreq();
-        $matreq->toUnit()->associate($this->toUnit);
-        $matreq->fromUnit()->associate(Auth::user()->unit_id);
-        $serv = new MatreqService($matreq);
-        $serv->requestMatreq($this->tglBuat);
-        $serv->syncItems($this->requestList);
-        $this->reset('requestList', 'toUnit');
-        $this->dispatch('success', 'Permintaan untuk unit ' . $matreq->toUnit->nama . ' berhasil dikirim');
+        $data = collect([
+            'keterangan' => $this->keterangan,
+            'tanggal' => $this->tanggal->format('Y-m-d'),
+            'items' => $this->requestList
+        ]);
+
+        $result = $this->barangExpireService->store($data);
+        if ($result->status() == 201) {
+            $this->dispatch('success', 'Data berhasil dikirim');
+            $this->reset('requestList', 'keterangan', 'tanggal');
+        } else {
+            $this->dispatch('error', "Data gagal dikirim, silahkan coba lagi, error: {$result->collect()->get('message')}");
+        }
     }
 }
