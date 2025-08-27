@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class BarangExpireService
 {
 
-    protected const BASE_URL = 'http://192.168.1.226:8080/api/gudangfarmasi/barangexpired'; //for dev only
+    // protected const BASE_URL = 'http://192.168.1.226:8080/api/gudangfarmasi/barangexpired'; //for dev only
 
     public function store($data): Response
     {
@@ -79,7 +79,7 @@ class BarangExpireService
 
     private function sendToRemote(RemoteBarangExpired $barangExpired): Response
     {
-        $url = self::BASE_URL . '/store';
+        $url = env('NLM_API_URL', ''). '/store';
         $res = Http::withHeaders([
             'X-API-KEY' => env('NLM_API_KEY', ''),
             'Content-Type' => 'application/json',
@@ -92,7 +92,7 @@ class BarangExpireService
     public function syncWithRemote(ObatExpired $obatExpired)
     {
         $nomor = base64_encode($obatExpired->nomor);
-        $url = self::BASE_URL . '/' . $nomor;
+        $url = env('NLM_API_URL', '') . '/' . $nomor;
         $res = Http::withHeaders([
             'X-API-KEY' => env('NLM_API_KEY', ''),
             'Content-Type' => 'application/json',
