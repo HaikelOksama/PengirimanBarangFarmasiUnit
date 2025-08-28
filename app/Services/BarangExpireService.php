@@ -142,7 +142,9 @@ class BarangExpireService
             ]);
             return;
         }
-
+        if (!isset($res['data']['status'])) {
+            return;
+        }
         $status = $res['data']['status'];
         if ($status !== $obatExpired->status) {
             $old = $obatExpired->status;
